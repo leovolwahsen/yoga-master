@@ -114,6 +114,49 @@ async function run() {
       res.send(result)
     })
 
+    // Cart Routes
+    app.post('/add-to-cart', async (req, res) => {
+      const newCartItem = req.body;
+      const result = await cartCollection.insertOne(newCartItem);
+      res.send(result);
+    })
+
+    // get cart item by id
+    app.get('/cart-item/:id', async (req, res) => {
+      const id = req.params.id;
+      const email = req.body.instructorEmail;
+      const query = {
+        classId: id,
+        userMail: email
+      };
+      const projection = { classId: 1 };
+      const result = await cartCollection.findOne(query, {projection: projection});
+      res.send(result);
+    })
+
+    // cart info by user email
+    app.get('/cart/email', async (req, res) => {
+      const email= req.params.email;
+      const query = { userMail: email };
+      const projection = { classId: 1 };
+      const carts = cartCollection.find(query, { projection: projection });
+      const classIds = carts.map((cart) => new ObjectId(cart.classId));
+      const query2 = { _id: { $in: classIds }};
+      const result = await classesCollection.find(query2).toArray();
+      res.send(result);
+    })
+
+    // delete cart item
+    app.delete('/delete-cart-item/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { classId: id };
+      const result = await cartCollection.deleteOne(query);
+      res.send(result);
+    })
+
+    // Payments route
+    
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
