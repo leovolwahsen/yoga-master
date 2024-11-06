@@ -1,15 +1,19 @@
-const express = require('express');
-const app = express();
-require('dotenv').config();
-const cors = require("cors");
-const port = process.env.PORT || 5000;
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import Stripe from "stripe";
 
+dotenv.config();
+const app = express();
+const port = process.env.PORT || 5000;
+const stripe = new Stripe(`${process.env.STRIPE_SECRET}`);
 // middleware
 app.use(cors());
 app.use(express.json());
 
-const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@yoga-master.vy0qr.mongodb.net/?retryWrites=true&w=majority&appName=yoga-master";`
+import { MongoClient, ServerApiVersion, ObjectId } from "mongodb";
+
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@yoga-master.vy0qr.mongodb.net/?retryWrites=true&w=majority&appName=yoga-master`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -17,13 +21,16 @@ const client = new MongoClient(uri, {
     version: ServerApiVersion.v1,
     strict: true,
     deprecationErrors: true,
-  }
+  },
 });
-
+let isConnected = false;
 async function run() {
   try {
-    // Connect the client to the server (optional starting in v4.7)
-    await client.connect();
+    if (!isConnected) {
+      // Connect the client to the server
+      await client.connect();
+      isConnected = true;
+    }
 
     // create a database and collections
     const database = client.db("yoga-master");
@@ -40,23 +47,27 @@ async function run() {
         const newClass = req.body;
         // newClass.availableSeats = parseInt(newClass.availableSeats);
         const result = await classesCollection.insertOne(newClass);
+
         res.send(result);
+
       } catch (error) {
         console.error(error);
         res.status(500).send({ error: "An error occurred" });
       }
-    })
+    });
 
     app.get("/classes", async (req, res) => {
       try {
         const query = { status: "approved" };
-        const result = await classesCollection.find().toArray()
+        const result = await classesCollection.find().toArray();
+
         res.send(result);
+
       } catch (error) {
         console.error(error);
         res.status(500).send({ error: "An error occurred" });
       }
-    })
+    });
 
     // Get classes by instructor email address
     app.get("/classes/:email", async (req, res) => {
@@ -64,78 +75,95 @@ async function run() {
         const email = req.params.email;
         const query = { instructorEmail: email };
         const result = await classesCollection.find(query).toArray();
+
         res.send(result);
+
       } catch (error) {
         console.error(error);
         res.status(500).send({ error: "An error occurred" });
       }
-    })
+    });
 
     // manage classes
     app.get(`/classes-manage`, async (req, res) => {
       try {
         const result = await classesCollection.find().toArray();
+
         res.send(result);
+
       } catch (error) {
         console.error(error);
         res.status(500).send({ error: "An error occurred" });
       }
-    })
+    });
 
     // update classes status reason
-    app.patch('/change-status/:id', async (req, res) => {
+    app.patch("/change-status/:id", async (req, res) => {
       try {
         const id = req.params.id;
         const status = req.body.status;
         const reason = req.body.reason;
         const filter = { _id: new ObjectId(id) };
         const options = { upsert: true };
+
         const updateDoc = {
           $set: {
             status: status,
             reason: reason,
           },
         };
-        const result = await classesCollection.updateOne(filter, updateDoc, options);
+
+        const result = await classesCollection.updateOne(
+          filter,
+          updateDoc,
+          options
+        );
+
         res.send(result);
+
       } catch (error) {
         console.error(error);
         res.status(500).send({ error: "An error occurred" });
       }
-    })
+    });
 
     // get approved classes
-    app.get('/approved-classes', async (req, res) => {
+    app.get("/approved-classes", async (req, res) => {
       try {
         const query = { status: "approved" };
         const result = await classesCollection.find(query).toArray();
+
         res.send(result);
+
       } catch (error) {
         console.error(error);
         res.status(500).send({ error: "An error occurred" });
       }
-    })
+    });
 
     // get single class details
-    app.get('/class/:id', async (req, res) => {
+    app.get("/class/:id", async (req, res) => {
       try {
         const id = req.params.id;
         const query = { _id: new ObjectId(id) };
         const result = await classesCollection.findOne(query);
+
         res.send(result);
+
       } catch (error) {
         console.error(error);
         res.status(500).send({ error: "An error occurred" });
       }
-    })
+    });
 
     // update class details and override entire body of object
-    app.put('/update-class/:id', async (req, res) => {
+    app.put("/update-class/:id", async (req, res) => {
       try {
         const id = req.params.id;
         const updateClass = req.body;
         const filter = { _id: new ObjectId(id) };
         const options = { upsert: true };
+
         const updateDoc = {
           $set: {
             name: updateClass.name,
@@ -143,96 +171,322 @@ async function run() {
             price: updateClass.price,
             availableSeats: parseInt(updateClass.availableSeats),
             videoLink: updateClass.videoLink,
-            status: 'pending'
-          }
+            status: "pending",
+          },
         };
-        const result = await classesCollection.updateOne(filter, updateDoc, options);
-        res.send(result)
-      } catch (error) {
-        console.error(error);
-        res.status(500).send({ error: "An error occurred" });
-      }
-    })
 
-    // Cart Routes
-    app.post('/add-to-cart', async (req, res) => {
-      try {
-        const newCartItem = req.body;
-        const result = await cartCollection.insertOne(newCartItem);
-        res.send(result);
-      } catch (error) {
-        console.error(error);
-        res.status(500).send({ error: "An error occurred" });
-      }
-    })
-
-    // get cart item by id
-    app.get('/cart-item/:id', async (req, res) => {
-      try {
-        const id = req.params.id;
-        const email = req.body.email;
-        const query = {
-          classId: id,
-          userMail: email
-        };
-        const projection = { classId: 1 };
-        const result = await cartCollection.findOne(query, { projection: projection });
-        res.send(result);
-      } catch (error) {
-        console.error(error);
-        res.status(500).send({ error: "An error occurred" });
-      }
-    })
-
-    // cart info by user email
-    app.get('/cart/:email', async (req, res) => {
-      try {
-        const email = req.params.email;
-        const query = { userMail: email };
-        const projection = { classId: 1 };
-
-        const carts = await cartCollection.find(query, { projection }).toArray();
-        const classIds = carts.map(cart => new ObjectId(cart.classId));
-
-        const query2 = { _id: { $in: classIds } };
-        const result = await classesCollection.find(query2).toArray();
+        const result = await classesCollection.updateOne(
+          filter,
+          updateDoc,
+          options
+        );
 
         res.send(result);
+
       } catch (error) {
         console.error(error);
         res.status(500).send({ error: "An error occurred" });
       }
     });
 
+    // Cart Routes
+    app.post("/add-to-cart", async (req, res) => {
+      try {
+        const newCartItem = req.body;
+        const result = await cartCollection.insertOne(newCartItem);
+
+        res.send(result);
+
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({ error: "An error occurred" });
+      }
+    });
+
+    // get cart item by id
+    app.get("/cart-item/:id", async (req, res) => {
+      try {
+        const id = req.params.id;
+        const email = req.body.email;
+
+        const query = {
+          classId: id,
+          userMail: email,
+        };
+
+        const projection = { classId: 1 };
+
+        const result = await cartCollection.findOne(query, {
+          projection: projection,
+        });
+
+        res.send(result);
+
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({ error: "An error occurred" });
+      }
+    });
+
+    // cart info by user email
+    app.get("/cart/:email", async (req, res) => {
+      try {
+        const email = req.params.email;
+        const query = { userMail: email };
+        const projection = { classId: 1 };
+
+        const carts = await cartCollection
+          .find(query, { projection })
+          .toArray();
+
+        const classIds = carts.map((cart) => new ObjectId(cart.classId));
+
+        const query2 = { _id: { $in: classIds } };
+
+        const result = await classesCollection.find(query2).toArray();
+
+        res.send(result);
+
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({ error: "An error occurred" });
+      }
+    });
 
     // delete cart item
-    app.delete('/delete-cart-item/:id', async (req, res) => {
+    app.delete("/delete-cart-item/:id", async (req, res) => {
       try {
         const id = req.params.id;
         const query = { classId: id };
+
         const result = await cartCollection.deleteOne(query);
+
         res.send(result);
+
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({ error: "An error occurred" });
+      }
+    });
+
+    // Payments route
+    app.post("/create-payment-intent", async (req, res) => {
+      try {
+        const { price } = req.body;
+        const amount = parseInt(price) * 100;
+
+        const paymentIntent = await stripe.paymentIntents.create({
+          amount: amount,
+          currency: "eur",
+          payment_method_types: ["card"],
+        });
+
+        res.send({
+          clientSecret: paymentIntent.client_secret,
+        });
+
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({ error: "An error occurred" });
+      }
+    });
+
+    // post payment info to db
+    app.post("/payment-info", async (req, res) => {
+      try {
+        const paymentInfo = req.body;
+        const classesId = paymentInfo.classesId;
+        const userEmail = paymentInfo.userEmail;
+        const singleClassId = req.query.classId;
+
+        let query;
+        if (singleClassId) {
+          query = { classId: singleClassId, userMail: userEmail };
+        } else {
+          query = { classId: { $in: classesId } };
+        }
+
+        const classesQuery = {
+          _id: { $in: classesId.map((id) => new ObjectId(id)) },
+        };
+        const classes = await classesCollection.find(classesQuery).toArray();
+        const newEnrolledData = {
+          userEmail: userEmail,
+          classId: singleClassId.map((id) => new ObjectId(id)),
+          transactionId: paymentInfo.transactionId,
+        };
+
+        const updatedDoc = {
+          $set: {
+            totalEnrolled:
+              classes.reduce(
+                (total, current) => total + current.totalEnrolled,
+                0
+              ) + 1 || 0,
+            availableSeats:
+              classes.reduce(
+                (total, current) => total + current.availableSeats,
+                0
+              ) - 1 || 0,
+          },
+        };
+
+        const updatedResult = await classesCollection.updateMany(
+          classesQuery,
+          updatedDoc,
+          { upsert: true }
+        );
+        const enrolledResult = await enrolledCollection.insertOne(
+          newEnrolledData
+        );
+        const deletedResult = await cartCollection.deleteMany(query);
+        const paymentResult = await paymentCollection.insertOne(paymentInfo);
+
+        res.send({
+          paymentResult,
+          deletedResult,
+          enrolledResult,
+          updatedResult,
+        });
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({ error: "An error occurred" });
+      }
+    });
+
+    // get payment history
+    app.get("/payment-history/:email", async (req, res) => {
+      try {
+        const email = req.params.email;
+        const query = { userEmail: email };
+
+        const result = await paymentCollection
+          .find(query)
+          .sort({ date: -1 })
+          .toArray();
+
+        res.send(result);
+
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({ error: "An error occurred" });
+      }
+    });
+
+    // get payment history length
+    app.get("/payment-history-length/:email", async (req, res) => {
+      try {
+        const email = req.params.email;
+        const query = { userEmail: email };
+
+        const total = await paymentCollection.countDocuments(query);
+
+        res.send({ total });
+
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({ error: "An error occurred" });
+      }
+    });
+
+    // get enrollment routes
+    app.get('/popular_classes', async (req, res) => {
+      try {
+        const result = await classesCollection.find().sort({ totalEnrolled: -1 }).limit(6).toArray();
+
+        res.send(result);
+
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({ error: "An error occurred" });
+      }
+    });
+
+    // get enrollement instructor data
+    app.get('/popular-instructors', async (req, res) => {
+      try {
+        const pipeline = [
+          {
+            $group: {
+              _id: '$instructorEmail',
+              totalEnrolled: { $sum: '$totalEnrolled' }
+            }
+          },
+          {
+            $lookup: {
+              from: 'users',
+              localField: '_id',
+              foreignField: 'email',
+              as: 'instructor'
+            }
+          },
+          {
+            $project: {
+              _id: 0,
+              instructor: {
+                $arrayElemAt: ['instructor', 0]
+              },
+              totalEnrolled: 1
+            }
+          },
+          {
+            $sort: {
+              totalEnrolled: -1
+            }
+          },
+          {
+            $limit: 6
+          }
+        ];
+
+        const result = await classesCollection.aggregate(pipeline).toArray();
+
+        res.send(result);
+
       } catch (error) {
         console.error(error);
         res.status(500).send({ error: "An error occurred" });
       }
     })
 
-    // Payments route
+    // get admin status
+    app.get('/admin-status', async (req, res) => {
+      try {
+        const approvedClasses = (classesCollection.find({ status: 'approved' }).toArray()).length;
+        const pendingClasses = (classesCollection.find({ status: 'pending' }).toArray()).length;
+        const instructors = (userCollections.find({ role: 'instructor' }).toArray()).length;
+        const totalClasses = classesCollection.find().toArray().length;
+        const totalEnrolled = enrolledCollection.find().toArray().length;
 
+        const result = {
+          approvedClasses,
+          pendingClasses,
+          instructors,
+          totalClasses,
+          totalEnrolled
+        }
+
+        res.send(result)
+        
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({ error: "An error occurred" });
+      }
+    })
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
-
+    console.log(
+      "Pinged your deployment. You successfully connected to MongoDB!"
+    );
   } catch (error) {
     console.error("Error occurred while connecting to MongoDB: ", error);
   }
 }
 run().catch(console.dir);
 
-app.get('/', (req, res) => {
-  res.send('Hello Developers in the future!')
+app.get("/", (req, res) => {
+  res.send("Hello Developers in the future!");
 });
 
 app.listen(port, () => {
