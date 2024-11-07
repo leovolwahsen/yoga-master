@@ -51,7 +51,7 @@ async function run() {
 
       } catch (error) {
         console.error(error);
-        res.status(500).setDefaultEncoding({ error: 'An error occurred' });
+        res.status(500).send({ error: 'An error occurred' });
       }
     });
 
@@ -64,7 +64,7 @@ async function run() {
 
       } catch (error) {
         console.error(error);
-        res.status(500).send(result);
+        res.status(500).send({ error: 'An error occurred' });
       }
     });
 
@@ -73,7 +73,7 @@ async function run() {
       try {
         const id = req.params.id;
         const query = { _id: new ObjectId(id) };
-        
+
         const result = await userCollections.findOne(query);
 
         res.send(result);
@@ -91,24 +91,66 @@ async function run() {
         const query = { email: email };
 
         const result = await userCollections.findOne(query);
-        
+
         res.send(result);
 
       } catch (error) {
-         console.error(error);
-         res.status(500).send({ error: 'An error occurred' });
+        console.error(error);
+        res.status(500).send({ error: 'An error occurred' });
       }
     });
 
     // delete user by id
     app.delete('/delete-user/:id', async (req, res) => {
       try {
-       
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) };
+
+        const result = await userCollections.deleteOne(query);
+
+        res.send(result);
+
       } catch (error) {
         console.error(error);
         res.status(500).send({ error: 'An error occurred' });
       }
     });
+
+    // update user by id
+    app.put('/update-user/:id', async (req, res) => {
+      try {
+        const id = req.params.id;
+        const updatedUser = req.body;
+
+        const filter = {
+          _id: new ObjectId(id)
+        };
+
+        const options = {
+          upsert: true
+        };
+
+        const updateDoc = {
+          $set: {
+            name: updatedUser.name,
+            email: updatedUser.email,
+            role: updatedUser.options,
+            address: updatedUser.address,
+            about: updatedUser.about,
+            photoUrl: updatedUser.photoUrl,
+            skills: updatedUser.skills ? updatedUser.skills : null
+          }
+        }
+
+        const result = await userCollections.updateOne(filter, updateDoc, options);
+
+        res.send(result);
+
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({ error: 'An error occurred' });
+      }
+    })
 
     // create classes routes
     app.post("/new-class", async (req, res) => {
@@ -361,13 +403,13 @@ async function run() {
       }
     });
 
-    // post payment info to db
+    // Post payment info to db
     app.post("/payment-info", async (req, res) => {
       try {
         const paymentInfo = req.body;
-        const classesId = paymentInfo.classesId;
+        const classesId = paymentInfo.classesId.map((id: string) => new ObjectId(id)); 
         const userEmail = paymentInfo.userEmail;
-        const singleClassId = req.query.classId;
+        const singleClassId = typeof req.query.classId === 'string' ? new ObjectId(req.query.classId) : undefined;
 
         let query;
         if (singleClassId) {
@@ -377,12 +419,14 @@ async function run() {
         }
 
         const classesQuery = {
-          _id: { $in: classesId.map((id) => new ObjectId(id)) },
+          _id: { $in: classesId },
         };
+
         const classes = await classesCollection.find(classesQuery).toArray();
+
         const newEnrolledData = {
           userEmail: userEmail,
-          classId: singleClassId.map((id) => new ObjectId(id)),
+          classId: singleClassId ? [singleClassId] : classesId,
           transactionId: paymentInfo.transactionId,
         };
 
@@ -418,6 +462,7 @@ async function run() {
           enrolledResult,
           updatedResult,
         });
+
       } catch (error) {
         console.error(error);
         res.status(500).send({ error: "An error occurred" });
@@ -522,11 +567,11 @@ async function run() {
     // get admin status
     app.get('/admin-status', async (req, res) => {
       try {
-        const approvedClasses = (classesCollection.find({ status: 'approved' }).toArray()).length;
-        const pendingClasses = (classesCollection.find({ status: 'pending' }).toArray()).length;
-        const instructors = (userCollections.find({ role: 'instructor' }).toArray()).length;
-        const totalClasses = classesCollection.find().toArray().length;
-        const totalEnrolled = enrolledCollection.find().toArray().length;
+        const approvedClasses = (await (classesCollection.find({ status: 'approved' }).toArray())).length;
+        const pendingClasses = (await (classesCollection.find({ status: 'pending' }).toArray())).length;
+        const instructors = (await (userCollections.find({ role: 'instructor' }).toArray())).length;
+        const totalClasses = (await classesCollection.find().toArray()).length;
+        const totalEnrolled = (await enrolledCollection.find().toArray()).length;
 
         const result = {
           approvedClasses,
@@ -609,10 +654,10 @@ async function run() {
     // applied for instructors
     app.post('/yoga-instructor', async (req, res) => {
       try {
-        const data = req.body; 
+        const data = req.body;
 
         const result = await appliedCollection.insertOne(data);
-        
+
         res.send(result);
 
       } catch (error) {
