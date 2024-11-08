@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "src/index.ts",
   "scripts": {
-    "start": "tsc && node dist/index.js",
+    "start": "nodemon src/index.ts",
     "dev": "nodemon --watch src --exec \"ts-node\" src/index.ts"
   },
   "dependencies": {

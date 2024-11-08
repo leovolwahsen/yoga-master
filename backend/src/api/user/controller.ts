@@ -39,19 +39,6 @@ export const getUserById = async (req: Request, res: Response) => {
   }
 }
 
-export const deleteUserById = async (req: Request, res: Response) => {
-  try {
-    const id = req.params.id;
-    const query = { _id: new ObjectId(id) };
-    const result = await userCollections.deleteOne(query);
-
-    res.send(result);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send({ error: 'An error occurred' });
-  }
-};
-
 export const getUserByEmail = async (req: Request, res: Response) => {
   try {
     const email = req.params.email;
@@ -99,3 +86,15 @@ export const updateUserById = async (req: Request, res: Response) => {
   }
 };
 
+export const deleteUserById = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+    const query = { _id: new ObjectId(id) };
+    const result = await userCollections.deleteOne(query);
+
+    res.send(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: 'An error occurred' });
+  }
+};
