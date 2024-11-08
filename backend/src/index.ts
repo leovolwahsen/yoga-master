@@ -3,7 +3,11 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { connectToDatabase } from "./config/database";
 import { userRouter } from "./api/user/routers";
-
+import { classRouter } from "./api/class/routers";
+import { cartRouter } from "./api/cart/routers";
+import { enrolledRouter } from "./api/enrolled/routers";
+import { paymentRouter } from "./api/payment/routers";
+import { appliedRouter } from "./api/applied/routes";
 
 dotenv.config();
 
@@ -19,7 +23,12 @@ connectToDatabase().then(() => {
   console.log("Database connected successfully");
 
   // Register routes
-  app.use("/api/users", userRouter);
+  app.use("/", userRouter);
+  app.use("/", classRouter);
+  app.use("/", cartRouter);
+  app.use("/", enrolledRouter);
+  app.use("/", paymentRouter);
+  app.use("/", appliedRouter);
 
   app.get("/", (req: Request, res: Response) => {
     res.send("Hello Developers in the future!");

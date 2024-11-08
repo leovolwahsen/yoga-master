@@ -21,14 +21,21 @@ export let enrolledCollection: Collection;
 export let appliedCollection: Collection;
 
 export async function connectToDatabase(): Promise<void> {
-  await client.connect();
-  db = client.db("yoga-master");
-  userCollections = db.collection("users");
-  classesCollection = db.collection("classes");
-  cartCollection = db.collection("cart");
-  paymentCollection = db.collection("payments");
-  enrolledCollection = db.collection("enrolled");
-  appliedCollection = db.collection("applied");
+  try {
+    await client.connect();
+    db = client.db("yoga-master");
 
-  console.log("Connected to MongoDB and initialized collections.");
+    userCollections = db.collection("users");
+    classesCollection = db.collection("classes");
+    cartCollection = db.collection("cart");
+    paymentCollection = db.collection("payments");
+    enrolledCollection = db.collection("enrolled");
+    appliedCollection = db.collection("applied");
+
+    console.log("Connected to MongoDB and initialized collections.");
+  } catch (error) {
+    console.error("Failed to connect to MongoDB:", error);
+    throw error;
+  }
 }
+
