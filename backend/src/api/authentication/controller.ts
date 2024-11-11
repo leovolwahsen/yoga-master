@@ -49,3 +49,24 @@ export const verifyAdmin = async (req: Request, res: Response, next: NextFunctio
         res.status(401).send({ message: errorMessage });
     }
 };
+
+export const verifyInstructor = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const email = req.decoded?.email;
+        if (!email) {
+            throw new Error("Unauthorized access");
+        }
+
+        const query = { email: email };
+        const user = await userCollections.findOne(query);
+
+        if (user?.role !== 'instructor') {
+            throw new Error("Unauthorized access");
+        }
+
+        next();
+    } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Unauthorized access";
+        res.status(401).send({ message: errorMessage });
+    }
+}
