@@ -8,6 +8,7 @@ import { cartRouter } from "./api/cart/routers";
 import { enrolledRouter } from "./api/enrolled/routers";
 import { paymentRouter } from "./api/payment/routers";
 import { appliedRouter } from "./api/applied/routes";
+import { authenticatorRouter } from "./api/authentication/routers";
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ connectToDatabase().then(() => {
   console.log("Database connected successfully");
 
   // Register routes
+  app.use("/", authenticatorRouter)
   app.use("/", userRouter);
   app.use("/", classRouter);
   app.use("/", cartRouter);

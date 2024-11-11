@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { cartCollection, classesCollection, enrolledCollection, paymentCollection } from "../../config/database";
-import { Class } from "../../types/classes";
 import { ObjectId } from "mongodb";
 import Stripe from "stripe";
 
