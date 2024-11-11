@@ -97,10 +97,10 @@ export const getApprovedClasses = async (req: Request, res: Response) => {
         const result = await classesCollection.find(query).toArray();
 
         res.send(result);
-      } catch (error) {
+    } catch (error) {
         console.error(error);
         res.status(500).send({ error: "An error occurred" });
-      }
+    }
 }
 
 export const updateClassById = async (req: Request, res: Response) => {
@@ -111,26 +111,26 @@ export const updateClassById = async (req: Request, res: Response) => {
         const options = { upsert: true };
 
         const updateDoc = {
-          $set: {
-            name: updateClass.name,
-            description: updateClass.description,
-            price: updateClass.price,
-            availableSeats: parseInt(updateClass.availableSeats),
-            videoLink: updateClass.videoLink,
-            status: "pending",
-          },
+            $set: {
+                name: updateClass.name,
+                description: updateClass.description,
+                price: updateClass.price,
+                availableSeats: parseInt(updateClass.availableSeats),
+                videoLink: updateClass.videoLink,
+                status: "pending",
+            },
         };
 
         const result = await classesCollection.updateOne(
-          filter,
-          updateDoc,
-          options
+            filter,
+            updateDoc,
+            options
         );
 
         res.send(result);
-      } catch (error) {
+    } catch (error) {
         console.error(error);
         res.status(500).send({ error: "An error occurred" });
-      }
+    }
 }
 
