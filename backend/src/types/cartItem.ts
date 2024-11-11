@@ -1,4 +1,4 @@
 export interface CartItem {
-    userMail: string;
-    classId: string;
-  }
+  userMail: string;
+  classId: string;
+}

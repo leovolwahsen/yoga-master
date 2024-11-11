@@ -1,5 +1,5 @@
 export interface Enrolled {
-    userEmail: string;
-    classId: string[];
-    transactionId: string;
-  }
+  userEmail: string;
+  classId: string[];
+  transactionId: string;
+}
