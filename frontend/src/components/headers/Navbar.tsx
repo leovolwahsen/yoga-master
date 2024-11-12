@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import logo from '../../assets/welcome/logo.jpg';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { createTheme } from '@mui/material/styles';
 
 const navLinks = [
     { name: "Home", route: "/" },
@@ -8,12 +9,60 @@ const navLinks = [
     { name: "Classes", route: "/classes" }
 ];
 
+const theme = createTheme({
+    palette: {
+        primary: {
+            main: "#ff0000",
+        },
+        secondary: {
+            main: "#00ff00",
+        }
+    }
+})
+
 export const Navbar = () => {
-    const [navBg, setNavBg] = useState("bg-[#15151580")
+    const navigate = useNavigate();
+    const location = useLocation();
+    const [isMobileMenueOpen, setIsMobileMenueOpen] = useState(false);
+    const [isHome, setIsHome] = useState(false);
+    const [isLogin, setIsLogin] = useState(false);
+    const [scrollPosition, setScrollPosition] = useState(0);
+    const [isFixed, setIsFixed] = useState(false);
+    const [isDarkMode, setIsDarkMode] = useState(false);
+    const [navBg, setNavBg] = useState("bg-[#15151580");
+
+    const toggleMobileMenue = () => {
+        setIsMobileMenueOpen(!isMobileMenueOpen)
+    };
+
+    useEffect(() => {
+        const darkClass = "dark";
+        const root = window.document.documentElement;
+
+        if (isDarkMode) {
+            root.classList.add(darkClass);
+        } else {
+            root.classList.remove(darkClass);
+        }
+    }, [isDarkMode]);
+    
+    useEffect(() => {
+        setIsHome(location.pathname === "/");
+        setIsLogin(location.pathname === "/login");
+        setIsFixed(location.pathname === "/register" || location.pathname === "/login");
+    }, [isHome]);
+
+    useEffect(() => {
+        if (scrollPosition > 100) {
+            if (isHome) {
+                setNavBg('bg-white back')
+            }
+        }
+    }, [])
     return (
         <nav>
             <div className='lg:w-[95%] mx-auto sm:px-6 lg:px-6'>
-                <div className='px-4 py-4 flex items-center justify-center'>
+                <div className='px-4 py-4 flex items-center justify-between'>
                     {/* logo */}
                     <div>
                         <h1 className='text-2xl inline-flex gap-3 items-center font-bold'>YogaMaster
@@ -39,6 +88,17 @@ export const Navbar = () => {
                                     </li>
                                 ))
                                 }
+
+                                {/* based on users */}
+                                <li>
+                                    <NavLink to="/login" className={({ isActive }) =>
+                                        `font-bold ${isActive ? 'text-secondary' :
+                                            `${navBg.includes('bg-transparent') ? 'text-white' : 'text-black dark:text-white'}`} hover:text-secondary duration-30`
+                                    }>Login</NavLink>
+                                </li>
+
+                                {/* color toggle */}
+                                <li>Light / Dark</li>
                             </ul>
                         </div>
                     </div>
