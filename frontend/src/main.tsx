@@ -5,7 +5,7 @@ import "./index.css";
 import { PrimaryLayout } from "./layout/PrimaryLayout";
 import { Instructors } from "./pages/Instructors";
 import { Classes } from "./pages/Classes";
-import { HomeConainer } from "./pages/home/HomeConainer";
+import { Home } from "./pages/home/Home";
 
 const router = createBrowserRouter([
   {
@@ -14,7 +14,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <HomeConainer />
+        element: <Home />
       },
       {
         path: "/instructors",

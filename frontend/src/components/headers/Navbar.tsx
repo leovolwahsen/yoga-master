@@ -6,7 +6,6 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Switch } from '@mui/material';
 import { FaBars } from "react-icons/fa";
 import { motion } from "framer-motion";
-import { VscWhitespace } from 'react-icons/vsc';
 
 const navLinks = [
     { name: "Home", route: "/" },
@@ -35,7 +34,7 @@ export const Navbar = () => {
     const [isFixed, setIsFixed] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [navBg, setNavBg] = useState("bg-[#15151580");
-    const [user, setUser] = useState(true);
+    const [user, ] = useState(true);
 
     const toggleMobileMenu = () => {
         setIsMobileMenuOpen(!isMobileMenuOpen)

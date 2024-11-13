@@ -1,6 +1,6 @@
-import image2 from "../../assets/homepage/image2.jpg";
+import image2 from "../../../assets/homepage/image2.jpg"
 
-export const SecondaryHome = () => {
+export const HomeTwo = () => {
   return (
     <div 
     className="min-h-screen bg-cover bg-black" 
@@ -8,8 +8,8 @@ export const SecondaryHome = () => {
       <div className="min-h-screen flex justify-start pl-11 items-center text-white bg-black bg-opacity-60">
         <div>
           <div className="space-y-4">
-            <p className="md:text-4xl text-2xl">We Offer</p>
-            <h1 className="md:text-7xl text-4xl font-bold">Yoga courses</h1>
+            <p className="md:text-4xl text-2xl">Quality Online</p>
+            <h1 className="md:text-7xl text-4xl font-bold">Courses for you</h1>
             <div className="md:w-1/2">
               <p className="">Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure possimus distinctio expedita! Inventore obcaecati libero sint laudantium. Adipisci, officia quae aliquid, laboriosam facere incidunt reprehenderit, neque dolorum sequi nobis blanditiis.</p>
             </div>

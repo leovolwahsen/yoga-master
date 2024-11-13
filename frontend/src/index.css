@@ -21,12 +21,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #ff194b92;
+  background-color: #ff881992;
   border-radius: 20px;
   transition: 1s;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #b68bdcf1;
+  background: #fcb928f1;
   transition: 1s;
 }
