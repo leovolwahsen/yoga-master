@@ -6,6 +6,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Switch } from '@mui/material';
 import { FaBars } from "react-icons/fa";
 import { motion } from "framer-motion";
+import { VscWhitespace } from 'react-icons/vsc';
 
 const navLinks = [
     { name: "Home", route: "/" },
@@ -92,10 +93,12 @@ export const Navbar = () => {
                 <div className='px-4 py-4 flex items-center justify-between'>
                     {/* logo */}
                     <div onClick={() => navigate('/')} className='flex-shrink-0 cursor-pointer pl-7 md:p-0 flex items-center'>
-                        <h1 className='text-2xl inline-flex gap-3 items-center font-bold'>YogaMaster
+                        <div>
+                            <h1 className='text-2xl inline-flex gap-3 items-center font-bold'>YogaMaster
                             <img src={logo} alt="YogaMaster Logo" className="w-8 h-8" />
                         </h1>
                         <p className="font-bold text-[13px] tracking-[3px]">Improve  on  yesterday</p>
+                        </div>
                     </div>
 
                     {/* mobile menue icons */}
@@ -112,6 +115,7 @@ export const Navbar = () => {
                                     <li key={index}>
                                         <NavLink
                                             to={link.route}
+                                            state={{whiteSpace: "nowrap"}}
                                             className={({ isActive }) =>
                                                 `font-bold ${isActive ? 'text-secondary' :
                                                     `${navBg.includes('bg-transparent') ? 'text-white' : 'text-black dark:text-white'}`} hover:text-secondary duration-300`
