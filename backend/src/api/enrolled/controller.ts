@@ -11,50 +11,58 @@ export const getEnrolledClasses = async (req: Request, res: Response) => {
         res.status(500).send({ error: "An error occurred" });
     }
 }
+
 export const getEnrolledInstructors = async (req: Request, res: Response) => {
     try {
         const pipeline = [
             {
-                $group: {
-                    _id: '$instructorEmail',
-                    totalEnrolled: { $sum: '$totalEnrolled' }
-                }
+                $match: { role: 'instructor' }  
             },
             {
                 $lookup: {
-                    from: 'users',
-                    localField: '_id',
-                    foreignField: 'email',
-                    as: 'instructor'
+                    from: 'classes',
+                    localField: 'email',
+                    foreignField: 'instructorEmail',
+                    as: 'enrollments'
                 }
             },
             {
                 $project: {
-                    _id: 0,
-                    instructor: {
-                        $arrayElemAt: ['instructor', 0]
+                    _id: 0, 
+                    totalEnrolled: { 
+                        $ifNull: [{ $sum: "$enrollments.totalEnrolled" }, 0]  
                     },
-                    totalEnrolled: 1
+                    instructor: {  
+                        _id: "$_id",
+                        name: "$name",
+                        email: "$email",
+                        photoUrl: "$photoUrl",
+                        gender: "$gender",
+                        address: "$address",
+                        role: "$role",
+                        phone: "$phone",
+                        about: "$about",
+                        skills: "$skills"
+                    }
                 }
             },
             {
-                $sort: {
-                    totalEnrolled: -1
-                }
+                $sort: { totalEnrolled: -1 }  
             },
             {
-                $limit: 6
+                $limit: 6 
             }
         ];
 
-        const result = await classesCollection.aggregate(pipeline).toArray();
+        const result = await userCollections.aggregate(pipeline).toArray();
 
         res.send(result);
     } catch (error) {
         console.error(error);
         res.status(500).send({ error: "An error occurred" });
     }
-}
+};
+
 
 export const getAdminStatus = async (req: Request, res: Response) => {
     try {

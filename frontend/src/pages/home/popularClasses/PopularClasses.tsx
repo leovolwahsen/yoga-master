@@ -13,7 +13,6 @@ export const PopularClasses = () => {
         axiosClasses()
     }, []);
 
-    console.log(`Axios classes: ${classes}`)
   return (
     <div className="md:w-[80%] mx-auto my-36">
         <div>
