@@ -1,17 +1,33 @@
 import { useEffect, useState } from "react";
 import { useAxios } from "../../../data/useAxios";
 
+export interface InstructorInterface {
+    totalEnrolled: number
+    instructor: {
+        _id: string
+        name: string
+        email: string
+        photoUrl: string
+        gender: string
+        address: string
+        role: string
+        phone: string,
+        about: string,
+        skills: string
+    }
+  }
 export const PopularInstructors = () => {
-    const [instructors, setInstructors] = useState([]);
+    const [instructor, setInstructor] = useState<InstructorInterface[]>([]);
     const axiosData = useAxios();
 
     useEffect(() => {
-        const axiosClasses = async () => {
-            const response = await axiosData.get("/popular-instructors");
-            setInstructors(response.data)
-        }
-        axiosClasses()
+         axiosData.get("/popular-instructors").then((res) => {
+            setInstructor(res.data);
+            }).catch ((err) => {
+                console.log(err)
+            })    
     }, []);
+
   return (
     <div className="md:w-[80%] mx-auto my-36">
     <div>
@@ -24,7 +40,29 @@ export const PopularInstructors = () => {
             </p>
         </div>
     </div>
+    
+    {
+        instructor ? 
+        <>
+       <div>
+    {
+        instructor?.map((instructor, index) => (
+            <div key={index}>
+                <div className="">
+                    <img 
+                        src={instructor?.instructor?.photoUrl} 
+                        alt="image of person" 
+                        className="h-[60px] w-[60px] rounded-full border-4 border-gray-300 mx-auto"
+                      
+                    />
+                </div>
+            </div>
+        ))
+    }
+</div>
 
+        </> : <></>
+    }
     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
        
     </div>
