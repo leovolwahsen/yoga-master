@@ -34,7 +34,7 @@ export const Navbar = () => {
     const [isFixed, setIsFixed] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [navBg, setNavBg] = useState("bg-[#15151580");
-    const [user, ] = useState(true);
+    const [user,] = useState(true);
 
     const toggleMobileMenu = () => {
         setIsMobileMenuOpen(!isMobileMenuOpen)
@@ -74,35 +74,39 @@ export const Navbar = () => {
                 setNavBg('bg-white dark:bg-black dark:text-white text-black')
             }
         } else {
-            setNavBg(`${isHome || location.pathname === '/' ? 'bg-transparent' : 'bg-white dark:bg-black'} dark:text-white text-white`)
+            setNavBg(`${isHome || location.pathname === '/' ? 'bg-transparent' : 'bg-white dark:bg-black'}
+                 dark:text-white text-white`)
         }
     }, [scrollPosition]);
 
-  const handleLogout = () => {
-    console.log("Logout");
-  }
+    const handleLogout = () => {
+        console.log("Logout");
+    }
 
     return (
         <motion.nav
-        initial={{opacity: 0}}
-        animate={{opacity: 1}}
-        transition={{duration: 0.5}}
-        className={`${isHome ? navBg : "bg-white dark:bg-black backdrop-blur-2xl"} ${isFixed ? 'static' : 'fixed'} top-0 transition-colors duration-500 ease-in-out w-full z-10`}>
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className={`${isHome ? navBg : "bg-white dark:bg-black backdrop-blur-2xl"} 
+        ${isFixed ? 'static' : 'fixed'} top-0 transition-colors duration-500 ease-in-out w-full z-10`}>
             <div className='lg:w-[95%] mx-auto sm:px-6 lg:px-6'>
                 <div className='px-4 py-4 flex items-center justify-between'>
                     {/* logo */}
-                    <div onClick={() => navigate('/')} className='flex-shrink-0 cursor-pointer pl-7 md:p-0 flex items-center'>
+                    <div onClick={() => navigate('/')}
+                        className='flex-shrink-0 cursor-pointer pl-7 md:p-0 flex items-center'>
                         <div>
-                            <h1 className='text-2xl inline-flex gap-3 items-center font-bold'>YogaMaster
-                            <img src={logo} alt="YogaMaster Logo" className="w-8 h-8" />
-                        </h1>
-                        <p className="font-bold text-[13px] tracking-[3px]">Improve  on  yesterday</p>
+                            <h1 className='text-2xl inline-flex gap-3 items-center font-bold'>Yoga Guide
+                                <img src={logo} alt="YogaGuide Logo" className="w-8 h-8" />
+                            </h1>
+                            <p className="font-bold text-[13px] tracking-[3px]">Improve  on  yesterday</p>
                         </div>
                     </div>
 
                     {/* mobile menue icons */}
                     <div className='md:hidden flex items-center'>
-                        <button type='button' onClick={toggleMobileMenu} className='text-gray-300 hover:text-white focus:outline-none'>
+                        <button type='button' onClick={toggleMobileMenu}
+                            className='text-gray-300 hover:text-white focus:outline-none'>
                             <FaBars className='h-6 w-6 hover:text-primary' />
                         </button>
                     </div>
@@ -114,7 +118,7 @@ export const Navbar = () => {
                                     <li key={index}>
                                         <NavLink
                                             to={link.route}
-                                            state={{whiteSpace: "nowrap"}}
+                                            style={{ whiteSpace: "nowrap" }}
                                             className={({ isActive }) =>
                                                 `font-bold ${isActive ? 'text-secondary' :
                                                     `${navBg.includes('bg-transparent') ? 'text-white' : 'text-black dark:text-white'}`} hover:text-secondary duration-300`
@@ -127,45 +131,47 @@ export const Navbar = () => {
                                 {/* based on users */}
                                 {
                                     user ? null : isLogin ? <li>
-                                        <NavLink 
-                                        to="/register" 
-                                        className={({ isActive }) =>
-                                            `font-bold ${isActive ? 'text-secondary' :
-                                                `${navBg.includes('bg-transparent') ? 'text-white' : 'text-black dark:text-white'}`} hover:text-secondary duration-300`
-                                        }>Register</NavLink>
+                                        <NavLink
+                                            to="/register"
+                                            className={({ isActive }) =>
+                                                `font-bold ${isActive ? 'text-secondary' :
+                                                    `${navBg.includes('bg-transparent') ? 'text-white' : 'text-black dark:text-white'}`} hover:text-secondary duration-300`
+                                            }>Register</NavLink>
                                     </li> : <li>
-                                        <NavLink 
-                                        to="/login" 
-                                        className={({ isActive }) =>
-                                            `font-bold ${isActive ? 'text-secondary' :
-                                                `${navBg.includes('bg-transparent') ? 'text-white' : 'text-black dark:text-white'}`} hover:text-secondary duration-300`
-                                        }>Login</NavLink>
+                                        <NavLink
+                                            to="/login"
+                                            className={({ isActive }) =>
+                                                `font-bold ${isActive ? 'text-secondary' :
+                                                    `${navBg.includes('bg-transparent') ? 'text-white' : 'text-black dark:text-white'}`} hover:text-secondary duration-300`
+                                            }>Login</NavLink>
                                     </li>
                                 }
 
                                 {
                                     user && <li>
-                                        <NavLink 
-                                        to='/dashboard'
-                                        className={({ isActive }) =>
-                                            `font-bold ${isActive ? 'text-secondary' :
-                                                `${navBg.includes('bg-transparent') ? 'text-white' : 'text-black dark:text-white'}`} hover:text-secondary duration-300`
-                                        }>Dashboard</NavLink>
+                                        <NavLink
+                                            to='/dashboard'
+                                            className={({ isActive }) =>
+                                                `font-bold ${isActive ? 'text-secondary' :
+                                                    `${navBg.includes('bg-transparent') ? 'text-white' : 'text-black dark:text-white'}`} hover:text-secondary duration-300`
+                                            }>Dashboard</NavLink>
                                     </li>
                                 }
 
                                 {
                                     user && <li>
-                                       <img src={guy} alt="profile image" className="h-[40px] w-[40px] rounded-full"/>
+                                        <img src={guy} alt="profile image"
+                                            className="h-[40px] w-[40px] rounded-full" />
                                     </li>
                                 }
 
                                 {
                                     user && <li>
-                                        <NavLink 
-                                        to=''
-                                        onClick={handleLogout}
-                                        className='font-bold px-3 py-2 bg-secondary text-white rounded-xl'>Logout</NavLink>
+                                        <NavLink
+                                            to=''
+                                            onClick={handleLogout}
+                                            className='font-bold px-3 py-2 bg-secondary text-white rounded-xl'
+                                        >Logout</NavLink>
                                     </li>
                                 }
 

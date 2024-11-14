@@ -1,32 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { RouterProvider } from "react-router-dom";
 import "./index.css";
-import { PrimaryLayout } from "./layout/PrimaryLayout";
-import { Instructors } from "./pages/Instructors";
-import { Classes } from "./pages/Classes";
-import { Home } from "./pages/home/Home";
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <PrimaryLayout />,
-    children: [
-      {
-        path: "/",
-        element: <Home />
-      },
-      {
-        path: "/instructors",
-        element: <Instructors />
-      },
-      {
-        path: "/classes",
-        element: <Classes />
-      }
-    ]
-  },
-]);
+import router from "./routers/router";
 
 const root = document.getElementById("root");
 root && ReactDOM.createRoot(root).render(
