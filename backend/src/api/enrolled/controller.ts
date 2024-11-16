@@ -63,7 +63,6 @@ export const getEnrolledInstructors = async (req: Request, res: Response) => {
     }
 };
 
-
 export const getAdminStatus = async (req: Request, res: Response) => {
     try {
         const approvedClasses = (await (classesCollection.find({ status: 'approved' }).toArray())).length;
