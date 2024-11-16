@@ -9,7 +9,7 @@ export const PrimaryLayout = () => {
   return (
     <main className={`overflow-hidden ${isDarkMode ? "dark" : ""}`}>
       <Navbar isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
-      <Outlet />
+      <Outlet context={{ isDarkMode }} />
       <Footer isDarkMode={isDarkMode} />
     </main>
   );

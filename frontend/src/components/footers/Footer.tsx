@@ -1,4 +1,4 @@
-import { FaBars } from "react-icons/fa";
+import { FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa";
 
 interface FooterProps {
   isDarkMode: boolean;
@@ -45,30 +45,36 @@ export const Footer: React.FC<FooterProps> = ({ isDarkMode }) => {
         </div>
 
         {/* Footer Links Section */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 py-12 px-4 text-center md:text-left">
-          <div>
+        <div className="flex flex-wrap justify-center gap-8 py-12 px-4">
+          {/* Social Media and Description Section */}
+          <div className="flex-1 min-w-[250px] max-w-[300px] text-center flex flex-col items-center">
             <p className={`mb-4 ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
               Our experienced instructors will guide you through structured lessons, helping you
               develop a solid foundation while nurturing your creativity and musical expression.
             </p>
             <div
-              className={`flex justify-center md:justify-start gap-4 ${
+              className={`flex justify-center gap-4 ${
                 isDarkMode ? "text-gray-300" : "text-gray-600"
               }`}
             >
-              {["facebook", "instagram", "twitter", "github", "dribbble"].map((icon, i) => (
-                <span key={i} className="cursor-pointer hover:text-blue-600">
-                  <i>{`fab fa-${icon}`}</i>
-                </span>
-              ))}
+              <FaFacebook className="text-2xl" />
+              <FaInstagram className="text-2xl" />
+              <FaLinkedin className="text-2xl" />
             </div>
           </div>
+
+          {/* Links Sections */}
           {links.map((link, i) => (
-            <div key={i}>
+            <div
+              key={i}
+              className="flex-1 min-w-[250px] max-w-[300px] text-center flex flex-col items-center"
+            >
               <h3 className="font-bold mb-4">{link.title}</h3>
               <ul className="space-y-2">
                 {link.items.map((item, j) => (
-                  <li key={j}>{item}</li>
+                  <li key={j} className={`${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
+                    {item}
+                  </li>
                 ))}
               </ul>
             </div>

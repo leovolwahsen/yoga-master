@@ -11,18 +11,18 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Home />
+        element: <Home />,
       },
       {
         path: "/instructors",
-        element: <Instructors />
+        element: <Instructors />,
       },
       {
         path: "/classes",
-        element: <Classes />
+        element: <Classes />,
       }
-    ]
-  }
+    ],
+  },
 ]);
 
 export default router;
