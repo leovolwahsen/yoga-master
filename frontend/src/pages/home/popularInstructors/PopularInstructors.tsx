@@ -1,22 +1,8 @@
 import { useEffect, useState } from "react";
 import { useAxios } from "../../../data/useAxios";
 import { FaLinkedin, FaFacebook, FaYoutube } from "react-icons/fa";
+import { InstructorInterface } from "../../../types/interfaces";
 
-export interface InstructorInterface {
-    totalEnrolled: number
-    instructor: {
-        _id: string
-        name: string
-        email: string
-        photoUrl: string
-        gender: string
-        address: string
-        role: string
-        phone: string,
-        about: string,
-        skills: string
-    }
-}
 export const PopularInstructors = () => {
     const [instructor, setInstructor] = useState<InstructorInterface[]>([]);
     const axiosData = useAxios();

@@ -1,8 +1,5 @@
 import { useOutletContext } from "react-router-dom";
-
-interface OutletContext {
-  isDarkMode: boolean;
-}
+import { OutletContext } from "../types/interfaces";
 
 export const Classes = () => {
   const { isDarkMode } = useOutletContext<OutletContext>();

@@ -1,13 +1,5 @@
 import { Link } from "react-router-dom";
-
-interface ClassItem {
-  _id: string;
-  name: string;
-  image: string;
-  availableSeats: number;
-  price: number;
-  totalEnrolled: number;
-}
+import { ClassItem } from "../../../types/interfaces";
 
 export const Card = ({ item }: { item: ClassItem }) => {
   const { _id, name, image, availableSeats, price, totalEnrolled } = item;

@@ -3,13 +3,10 @@ import { PopularClasses } from "./popularClasses/PopularClasses";
 import { PopularInstructors } from "./popularInstructors/PopularInstructors";
 import { HomeContainer } from "./sliders/HomeConainer";
 import { Gallery } from "./gallary/Gallery";
-
-interface OutletContext {
-  isDarkMode: boolean;
-}
+import { OutletContext } from "../../types/interfaces";
 
 export const Home = () => {
-  const { isDarkMode } = useOutletContext<OutletContext>(); // Access isDarkMode
+  const { isDarkMode } = useOutletContext<OutletContext>();
 
   return (
     <section className={`${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>

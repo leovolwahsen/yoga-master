@@ -1,8 +1,5 @@
 import { FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa";
-
-interface FooterProps {
-  isDarkMode: boolean;
-}
+import { FooterProps } from "../../types/interfaces";
 
 export const Footer: React.FC<FooterProps> = ({ isDarkMode }) => {
   const stats = [
