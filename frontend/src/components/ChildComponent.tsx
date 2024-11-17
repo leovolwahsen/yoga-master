@@ -1,8 +1,8 @@
 import { useOutletContext } from "react-router-dom";
-import { OutletContext } from "../types/interfaces";
+import { IOutletContext } from "../types/interfaces";
 
 export const ChildComponent = () => {
-  const { isDarkMode } = useOutletContext<OutletContext>();
+  const { isDarkMode } = useOutletContext<IOutletContext>();
 
   return (
     <div className={`${isDarkMode ? "bg-black text-white" : "bg-white text-black"} p-8`}>

@@ -6,7 +6,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Switch } from "@mui/material";
 import { FaBars } from "react-icons/fa";
 import { motion } from "framer-motion";
-import { NavbarProps } from "../../types/interfaces";
+import { INavbarProps } from "../../types/interfaces";
 
 const navLinks = [
   { name: "Home", route: "/" },
@@ -25,7 +25,7 @@ const theme = createTheme({
   },
 });
 
-  export const Navbar: React.FC<NavbarProps> = ({ isDarkMode, setIsDarkMode }) => {
+  export const Navbar: React.FC<INavbarProps> = ({ isDarkMode, setIsDarkMode }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

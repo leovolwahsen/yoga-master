@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { useAxios } from "../../../data/useAxios";
 import { FaLinkedin, FaFacebook, FaYoutube } from "react-icons/fa";
-import { InstructorInterface } from "../../../types/interfaces";
+import { IPopularInstructor } from "../../../types/interfaces";
 
 export const PopularInstructors = () => {
-    const [instructor, setInstructor] = useState<InstructorInterface[]>([]);
+    const [instructor, setInstructor] = useState<IPopularInstructor[]>([]);
     const axiosData = useAxios();
 
     useEffect(() => {
@@ -59,7 +59,7 @@ export const PopularInstructors = () => {
                             ))
                         }
                     </div>
-                : null
+                : <p>Currently there are no instructor information available!</p>
             }
         </div>
     )

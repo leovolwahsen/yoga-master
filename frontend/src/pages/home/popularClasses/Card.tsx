@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
-import { ClassItem } from "../../../types/interfaces";
+import { IClassItem } from "../../../types/interfaces";
 
-export const Card = ({ item }: { item: ClassItem }) => {
+export const Card = ({ item }: { item: IClassItem }) => {
   const { _id, name, image, availableSeats, price, totalEnrolled } = item;
 
   return (

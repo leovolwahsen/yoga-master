@@ -1,12 +1,12 @@
 import { FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa";
-import { FooterProps } from "../../types/interfaces";
+import { IFooterProps } from "../../types/interfaces";
 
-export const Footer: React.FC<FooterProps> = ({ isDarkMode }) => {
+export const Footer: React.FC<IFooterProps> = ({ isDarkMode }) => {
   const stats = [
-    { number: "35M+", label: "Visitor" },
-    { number: "5M+", label: "Subscriber" },
-    { number: "950k+", label: "Students" },
-    { number: "90%", label: "Success stories" },
+    { number: "26M+", label: "Visitor" },
+    { number: "1M+", label: "Subscriber" },
+    { number: "750k+", label: "Students" },
+    { number: "70%", label: "Success stories" },
   ];
 
   const links = [
@@ -39,6 +39,28 @@ export const Footer: React.FC<FooterProps> = ({ isDarkMode }) => {
               <p className="text-lg">{stat.label}</p>
             </div>
           ))}
+        </div>
+
+        {/* Newsletter Section */}
+        <div className="flex flex-col items-center py-12 px-4 text-center">
+          <h3 className="text-2xl font-bold mb-4">
+            Please enter your Email to recive our weekly newsletter!
+          </h3>
+          <div className="flex flex-col sm:flex-row items-center gap-4">
+            <input
+              type="text"
+              placeholder="example@email.com"
+              className={`px-4 py-2 rounded-lg text-sm w-full sm:w-96 border ${
+                isDarkMode ? "bg-gray-700 border-gray-500 text-white" : "bg-gray-200 border-gray-300"
+              }`}
+            />
+            <button
+              type="button"
+              className="px-6 py-2 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600"
+            >
+              Subscribe
+            </button>
+          </div>
         </div>
 
         {/* Footer Links Section */}

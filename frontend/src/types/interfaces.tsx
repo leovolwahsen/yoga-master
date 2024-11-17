@@ -1,17 +1,17 @@
-export interface OutletContext {
+export interface IOutletContext {
     isDarkMode: boolean;
 }
 
-export interface NavbarProps {
+export interface INavbarProps {
     isDarkMode: boolean;
     setIsDarkMode: (value: boolean) => void;
 }
 
-export interface FooterProps {
+export interface IFooterProps {
     isDarkMode: boolean;
 }
 
-export interface ClassItem {
+export interface IClassItem {
     _id: string;
     name: string;
     image: string;
@@ -20,7 +20,7 @@ export interface ClassItem {
     totalEnrolled: number;
 }
 
-export interface InstructorInterface {
+export interface IPopularInstructor {
     totalEnrolled: number
     instructor: {
         _id: string
@@ -34,4 +34,17 @@ export interface InstructorInterface {
         about: string
         skills: string
     }
+}
+
+export interface IInstructors {
+    _id: string
+    name: string
+    email: string
+    photoUrl: string
+    gender: string
+    address: string
+    role: string
+    phone: string
+    about: string
+    skills: string
 }
