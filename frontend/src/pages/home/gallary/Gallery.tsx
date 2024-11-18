@@ -4,7 +4,7 @@ import image5 from "../../../assets/homepage/image5.jpg";
 
 export const Gallery = () => {
   return (
-    <div className="md:w-[80%] mx-auto my-28">
+    <div className="md:w-[80%] mx-auto my-36">
         <div className="mb-16">
             <h1 className="text-5xl font-bold text-center">Our Gallery</h1>
         </div>

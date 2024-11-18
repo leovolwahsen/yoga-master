@@ -9,9 +9,11 @@ export const Home = () => {
   const { isDarkMode } = useOutletContext<IOutletContext>();
 
   return (
-    <section className={`${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
+    <section className={`${isDarkMode ? "bg-black text-white" : "bg-gray-100 text-black"} py-1`}>
       <HomeContainer />
-      <div className="max-w-screen-xl mx-auto">
+      <div 
+      className="max-w-screen-xl mx-auto"
+      >
         <Gallery />
         <PopularClasses />
         <PopularInstructors />
