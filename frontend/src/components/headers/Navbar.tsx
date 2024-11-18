@@ -25,7 +25,7 @@ const theme = createTheme({
   },
 });
 
-  export const Navbar: React.FC<INavbarProps> = ({ isDarkMode, setIsDarkMode }) => {
+export const Navbar: React.FC<INavbarProps> = ({ isDarkMode, setIsDarkMode }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -56,24 +56,23 @@ const theme = createTheme({
   }, []);
 
   useEffect(() => {
-    if (scrollPosition > 100) {
+    if (scrollPosition >= 0) {
       if (isHome) {
         setNavBg(
-          "bg-white backdrop-filter backdrop-blur-xl bg-opacity-0 dark:text-white text-black"
+          "bg-white backdrop-filter backdrop-blur-xl bg-opacity-20 dark:text-white text-black"
         );
       } else {
         setNavBg("bg-white dark:bg-black dark:text-white text-black");
       }
     } else {
       setNavBg(
-        `${
-          isHome || location.pathname === "/"
-            ? "bg-transparent"
-            : "bg-white dark:bg-black"
+        `${isHome || location.pathname === "/"
+          ? "bg-transparent"
+          : "bg-white dark:bg-black"
         } dark:text-white text-white`
       );
     }
-  }, [scrollPosition]);
+  }, [scrollPosition, isHome]);
 
   const handleLogout = () => {
     console.log("Logout");
@@ -95,11 +94,19 @@ const theme = createTheme({
             className="flex-shrink-0 cursor-pointer pl-7 md:p-0 flex items-center"
           >
             <div>
-              <h1 className="text-2xl inline-flex gap-3 items-center font-bold">
+              <h1
+                className={`text-2xl inline-flex gap-3 items-center font-bold ${isDarkMode ? "text-white" : "text-black"
+                  }`}
+              >
                 Yoga Guide
                 <img src={logo} alt="YogaGuide Logo" className="w-8 h-8" />
               </h1>
-              <p className="font-bold text-[13px] tracking-[3px]">Improve on yesterday</p>
+              <p
+                className={`font-bold text-[13px] tracking-[3px] ${isDarkMode ? "text-white" : "text-black"
+                  }`}
+              >
+                Improve on yesterday
+              </p>
             </div>
           </div>
 
@@ -122,12 +129,10 @@ const theme = createTheme({
                   <li key={index}>
                     <NavLink
                       to={link.route}
-                      style={{ whiteSpace: "nowrap" }}
                       className={({ isActive }) =>
-                        `font-bold ${
-                          isActive
-                            ? "text-secondary"
-                            : `${navBg.includes("bg-transparent") ? "text-white" : "text-black dark:text-white"}`
+                        `font-bold ${isActive
+                          ? `${isDarkMode ? "text-secondary" : "text-primary"}`
+                          : `${navBg.includes("bg-transparent") ? "text-white" : "text-black dark:text-white"}`
                         } hover:text-secondary duration-300`
                       }
                     >
@@ -141,10 +146,9 @@ const theme = createTheme({
                     <NavLink
                       to="/register"
                       className={({ isActive }) =>
-                        `font-bold ${
-                          isActive
-                            ? "text-secondary"
-                            : `${navBg.includes("bg-transparent") ? "text-white" : "text-black dark:text-white"}`
+                        `font-bold ${isActive
+                          ? `${isDarkMode ? "text-secondary" : "text-primary"}`
+                          : `${navBg.includes("bg-transparent") ? "text-white" : "text-black dark:text-white"}`
                         } hover:text-secondary duration-300`
                       }
                     >
@@ -156,10 +160,9 @@ const theme = createTheme({
                     <NavLink
                       to="/login"
                       className={({ isActive }) =>
-                        `font-bold ${
-                          isActive
-                            ? "text-secondary"
-                            : `${navBg.includes("bg-transparent") ? "text-white" : "text-black dark:text-white"}`
+                        `font-bold ${isActive
+                          ? `${isDarkMode ? "text-secondary" : "text-primary"}`
+                          : `${navBg.includes("bg-transparent") ? "text-white" : "text-black dark:text-white"}`
                         } hover:text-secondary duration-300`
                       }
                     >
@@ -173,10 +176,9 @@ const theme = createTheme({
                     <NavLink
                       to="/dashboard"
                       className={({ isActive }) =>
-                        `font-bold ${
-                          isActive
-                            ? "text-secondary"
-                            : `${navBg.includes("bg-transparent") ? "text-white" : "text-black dark:text-white"}`
+                        `font-bold ${isActive
+                          ? `${isDarkMode ? "text-secondary" : "text-primary"}`
+                          : `${navBg.includes("bg-transparent") ? "text-white" : "text-black dark:text-white"}`
                         } hover:text-secondary duration-300`
                       }
                     >

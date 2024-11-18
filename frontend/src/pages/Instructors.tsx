@@ -36,7 +36,7 @@ export const Instructors = () => {
                                 instructor.map((instructor, index) => (
                                     <div
                                         key={index}
-                                        className={`flex hover:-translate-y-2 duration-200 cursor-pointer flex-col shadow-2xl ${isDarkMode ? "bg-gray-800 text-white" : "bg-blue-100 text-gray-800"
+                                        className={`flex hover:-translate-y-2 duration-200 cursor-pointer flex-col shadow-2xl ${isDarkMode ? "bg-gray-800 text-white" : "bg-gray-200 text-gray-800"
                                             } py-8 px-10 md:px-8 rounded-md`}
                                     >
 
@@ -51,7 +51,7 @@ export const Instructors = () => {
 
                                             <div className="flex flex-col text-center">
                                                 <p className="font-medium text-lg dark:text-white text-gray-800">{instructor?.name}</p>
-                                                <p className="text-gray-500 whitespace-nowrap mb-4">{instructor?.role}</p>
+                                                <p className="text-gray-500 mb-4">{instructor?.role}</p>
                                                 <div className="flex flex-col items-center mb-4 space-y-1">
                                                     <div className="flex justify-between w-full max-w-[300px]">
                                                         <span>Address:</span>
