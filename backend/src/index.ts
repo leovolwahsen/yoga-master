@@ -33,7 +33,7 @@ connectToDatabase().then(() => {
   app.use("/", appliedRouter);
 
   app.get("/", (req: Request, res: Response) => {
-    res.send("Hello Developers in the future!");
+    res.send("Welcome to the backend server!");
   });
 
   // Start server

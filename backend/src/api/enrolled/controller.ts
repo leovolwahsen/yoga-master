@@ -16,7 +16,7 @@ export const getEnrolledInstructors = async (req: Request, res: Response) => {
     try {
         const pipeline = [
             {
-                $match: { role: 'instructor' }  
+                $match: { role: 'Instructor' }  
             },
             {
                 $lookup: {
@@ -67,7 +67,7 @@ export const getAdminStatus = async (req: Request, res: Response) => {
     try {
         const approvedClasses = (await (classesCollection.find({ status: 'approved' }).toArray())).length;
         const pendingClasses = (await (classesCollection.find({ status: 'pending' }).toArray())).length;
-        const instructors = (await (userCollections.find({ role: 'instructor' }).toArray())).length;
+        const instructors = (await (userCollections.find({ role: 'Instructor' }).toArray())).length;
         const totalClasses = (await classesCollection.find().toArray()).length;
         const totalEnrolled = (await enrolledCollection.find().toArray()).length;
 
@@ -88,7 +88,7 @@ export const getAdminStatus = async (req: Request, res: Response) => {
 
 export const getAllInstructors = async (req: Request, res: Response) => {
     try {
-        const result = await userCollections.find({ role: 'instructor' }).toArray();
+        const result = await userCollections.find({ role: 'Instructor' }).toArray();
 
         res.send(result);
     } catch (error) {
@@ -121,14 +121,14 @@ export const getEnrolledClassesByEmail = async (req: Request, res: Response) => 
                     from: 'users',
                     localField: 'classes.instructorEmail',
                     foreignField: 'email',
-                    as: 'instructor'
+                    as: 'Instructor'
                 }
             },
             {
                 $project: {
                     _id: 0,
                     instructor: {
-                        $arrayElemAt: ['$instructor', 0]
+                        $arrayElemAt: ['$Instructor', 0]
                     },
                     classes: 1
                 }

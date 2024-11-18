@@ -60,7 +60,7 @@ export const verifyInstructor = async (req: Request, res: Response, next: NextFu
         const query = { email: email };
         const user = await userCollections.findOne(query);
 
-        if (user?.role !== 'instructor') {
+        if (user?.role !== 'Instructor') {
             throw new Error("Unauthorized access");
         }
 
