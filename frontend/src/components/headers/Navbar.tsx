@@ -117,7 +117,7 @@ export const Navbar: React.FC<INavbarProps> = ({ isDarkMode, setIsDarkMode }) =>
               onClick={toggleMobileMenu}
               className="text-gray-300 hover:text-white focus:outline-none"
             >
-              <FaBars className="h-6 w-6 hover:text-primary" />
+              <FaBars className="h-6 w-6 hover:text-secondary" />
             </button>
           </div>
 
@@ -131,7 +131,7 @@ export const Navbar: React.FC<INavbarProps> = ({ isDarkMode, setIsDarkMode }) =>
                       to={link.route}
                       className={({ isActive }) =>
                         `font-bold ${isActive
-                          ? `${isDarkMode ? "text-secondary" : "text-primary"}`
+                          ? `${isDarkMode ? "text-secondary" : "text-secondary"}`
                           : `${navBg.includes("bg-transparent") ? "text-white" : "text-black dark:text-white"}`
                         } hover:text-secondary duration-300`
                       }
@@ -147,7 +147,7 @@ export const Navbar: React.FC<INavbarProps> = ({ isDarkMode, setIsDarkMode }) =>
                       to="/register"
                       className={({ isActive }) =>
                         `font-bold ${isActive
-                          ? `${isDarkMode ? "text-secondary" : "text-primary"}`
+                          ? `${isDarkMode ? "text-secondary" : "text-secondary"}`
                           : `${navBg.includes("bg-transparent") ? "text-white" : "text-black dark:text-white"}`
                         } hover:text-secondary duration-300`
                       }
@@ -161,7 +161,7 @@ export const Navbar: React.FC<INavbarProps> = ({ isDarkMode, setIsDarkMode }) =>
                       to="/login"
                       className={({ isActive }) =>
                         `font-bold ${isActive
-                          ? `${isDarkMode ? "text-secondary" : "text-primary"}`
+                          ? `${isDarkMode ? "text-secondary" : "text-secondary"}`
                           : `${navBg.includes("bg-transparent") ? "text-white" : "text-black dark:text-white"}`
                         } hover:text-secondary duration-300`
                       }
@@ -177,7 +177,7 @@ export const Navbar: React.FC<INavbarProps> = ({ isDarkMode, setIsDarkMode }) =>
                       to="/dashboard"
                       className={({ isActive }) =>
                         `font-bold ${isActive
-                          ? `${isDarkMode ? "text-secondary" : "text-primary"}`
+                          ? `${isDarkMode ? "text-secondary" : "text-secondary"}`
                           : `${navBg.includes("bg-transparent") ? "text-white" : "text-black dark:text-white"}`
                         } hover:text-secondary duration-300`
                       }

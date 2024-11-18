@@ -12,7 +12,7 @@ export const Instructors = () => {
         axiosData.get("/instructors").then((res) => {
             setInstructor(res.data);
         }).catch((err) => {
-            console.log(err)
+            console.error(err);
         })
     }, []);
 

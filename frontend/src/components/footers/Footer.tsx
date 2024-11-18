@@ -69,7 +69,7 @@ export const Footer: React.FC<IFooterProps> = ({ isDarkMode }) => {
           <div className="flex-1 min-w-[250px] max-w-[300px] text-center flex flex-col items-center">
             <p className={`mb-4 ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
               Our experienced instructors will guide you through structured lessons, helping you
-              develop a solid foundation while nurturing your creativity and musical expression.
+              develop a solid foundation.
             </p>
             <div
               className={`flex justify-center gap-4 ${
