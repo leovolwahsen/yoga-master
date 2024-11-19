@@ -1,3 +1,6 @@
+import { User } from "firebase/auth"
+import { ReactNode } from "react"
+
 export interface IOutletContext {
     isDarkMode: boolean
 }
@@ -55,4 +58,19 @@ export interface IInstructors {
     phone: string
     about: string
     skills: string
+}
+
+export interface IAuthenticationProviderProps {
+    children: ReactNode;
+}
+
+export interface IAuthContextValue {
+    user: User | null;
+    signup: (email: string, password: string) => Promise<void>;
+    login: (email: string, password: string) => Promise<void>;
+    logout: () => Promise<void>;
+    updateUser: (name: string, photo: string) => Promise<void>;
+    googleLogin: () => Promise<void>;
+    error: Error | string | null;
+    setError: React.Dispatch<React.SetStateAction<Error | string | null>>;
 }

@@ -1,38 +1,40 @@
-import React, { createContext, ReactNode, useEffect, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import { app } from "../../config/firebase.init";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, User } from "firebase/auth";
 import axios from "axios";
+import { IAuthContextValue, IAuthenticationProviderProps } from "../../types/interfaces";
 
-interface AuthContextValue {
-    user: User | null;
-    signup: (email: string, password: string) => Promise<void>;
-    login: (email: string, password: string) => Promise<void>;
-    logout: () => Promise<void>;
-    updateUser: (name: string, photo: string) => Promise<void>;
-    googleLogin: () => Promise<void>;
-}
-
-const defaultAuthContextValue: AuthContextValue = {
+const defaultAuthContextValue: IAuthContextValue = {
     user: null,
     signup: async () => {},
     login: async () => {},
     logout: async () => {},
     updateUser: async () => {},
     googleLogin: async () => {},
+    error: null,
+    setError: () => {}
 };
 
-const AuthContext = createContext<AuthContextValue>(defaultAuthContextValue);
+const AuthContext = createContext<IAuthContextValue>(defaultAuthContextValue);
 
-interface AuthenticationProviderProps {
-    children: ReactNode;
-}
-
-const AuthenticationProvider: React.FC<AuthenticationProviderProps> = ({ children }) => {
+const AuthenticationProvider: React.FC<IAuthenticationProviderProps> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
-    const [loader, setLoader] = useState<boolean>(true);
-    const [error, setError] = useState<string>("");
+    const [, setLoader] = useState<boolean>(true);
+    const [error, setError] = useState<Error | string | null>(null);
 
     const auth = getAuth(app);
+
+    // when catching error this helps to not have to define type error to be any
+    const handleError = (err: unknown): Error | string => {
+        if (err instanceof Error) {
+            return err;
+        }
+        return "An unknown error occurred.";
+    };
+
+    const extractErrorMessage = (err: Error | string | null): string => {
+        return err instanceof Error ? err.message : err || "";
+    };
 
     // Sign up a new user
     const signup = async (email: string, password: string): Promise<void> => {
@@ -40,9 +42,10 @@ const AuthenticationProvider: React.FC<AuthenticationProviderProps> = ({ childre
             setLoader(true);
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             setUser(userCredential.user);
-        } catch (error: any) {
-            setError(error.message);
-            throw error;
+        } catch (err) {
+            const processedError = handleError(err);
+            setError(processedError);
+            throw new Error(extractErrorMessage(processedError));
         } finally {
             setLoader(false);
         }
@@ -54,9 +57,10 @@ const AuthenticationProvider: React.FC<AuthenticationProviderProps> = ({ childre
             setLoader(true);
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             setUser(userCredential.user);
-        } catch (error: any) {
-            setError(error.message);
-            throw error;
+        } catch (err) {
+            const processedError = handleError(err);
+            setError(processedError);
+            throw new Error(extractErrorMessage(processedError));
         } finally {
             setLoader(false);
         }
@@ -67,9 +71,10 @@ const AuthenticationProvider: React.FC<AuthenticationProviderProps> = ({ childre
         try {
             await signOut(auth);
             setUser(null);
-        } catch (error: any) {
-            setError(error.message);
-            throw error;
+        } catch (err) {
+            const processedError = handleError(err);
+            setError(processedError);
+            throw new Error(extractErrorMessage(processedError));
         }
     };
 
@@ -83,9 +88,10 @@ const AuthenticationProvider: React.FC<AuthenticationProviderProps> = ({ childre
                 });
                 setUser(auth.currentUser);
             }
-        } catch (error: any) {
-            setError(error.message);
-            throw error;
+        } catch (err) {
+            const processedError = handleError(err);
+            setError(processedError);
+            throw new Error(extractErrorMessage(processedError));
         }
     };
 
@@ -96,35 +102,37 @@ const AuthenticationProvider: React.FC<AuthenticationProviderProps> = ({ childre
             setLoader(true);
             const result = await signInWithPopup(auth, googleProvider);
             setUser(result.user);
-        } catch (error: any) {
-            setError(error.message);
-            throw error;
+        } catch (err) {
+            const processedError = handleError(err);
+            setError(processedError);
+            throw new Error(extractErrorMessage(processedError));
         } finally {
             setLoader(false);
         }
     };
 
     // observer for users 
-    // useEffect(() => {
-    //     const unsubscribe = onAuthStateChanged((user) => {
-    //         setUser(user);
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            setUser(user);
 
-    //         if (user) {
-    //             axios.post("/")
-    //         } else {
+            if (user) {
+                axios.post("http://localhost:5000/set-token", { email: user.email, name: user.displayName })
+                .then((res) => {
+                    if (res.data.token) {
+                        localStorage.setItem('token', res.data.token);
+                        setLoader(false)
+                    }
+                })
+            } else {
+                localStorage.removeItem('token');
+                setLoader(false);
+            }
+        })
+        return () => unsubscribe()
+    }, [])
 
-    //         }
-    //     })
-    // }, [])
-
-    const contextValue: AuthContextValue = {
-        user,
-        signup,
-        login,
-        logout,
-        updateUser,
-        googleLogin
-    };
+    const contextValue: IAuthContextValue = { user, signup, login, logout, updateUser, googleLogin, error, setError };
 
     return (
         <AuthContext.Provider value={contextValue}>
