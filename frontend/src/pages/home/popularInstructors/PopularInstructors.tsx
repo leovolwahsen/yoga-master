@@ -59,7 +59,7 @@ export const PopularInstructors = () => {
                             ))
                         }
                     </div>
-                : <p>Currently there are no instructor information available!</p>
+                    : <p>Currently there are no instructor information available!</p>
             }
         </div>
     )
