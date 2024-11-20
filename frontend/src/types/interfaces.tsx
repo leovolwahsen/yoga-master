@@ -1,4 +1,3 @@
-import { User } from "firebase/auth"
 import { ReactNode } from "react"
 
 export interface IOutletContext {
@@ -65,12 +64,19 @@ export interface IAuthenticationProviderProps {
 }
 
 export interface IAuthContextValue {
-    user: User | null;
-    signup: (email: string, password: string) => Promise<void>;
-    login: (email: string, password: string) => Promise<void>;
-    logout: () => Promise<void>;
-    updateUser: (name: string, photo: string) => Promise<void>;
-    googleLogin: () => Promise<void>;
-    error: Error | string | null;
-    setError: React.Dispatch<React.SetStateAction<Error | string | null>>;
+    user: IUser
+    signup: (email: string, password: string) => Promise<void>
+    login: (email: string, password: string) => Promise<void>
+    logout: () => Promise<void>
+    updateUser: (name: string, photo: string) => Promise<void>
+    googleLogin: () => Promise<void>
+    error: Error | string | null
+    setError: React.Dispatch<React.SetStateAction<Error | string | null>>
+}
+
+export interface IUser {
+    id: string
+    name: string
+    email: string
+    role: 'admin' | 'instructor' | 'student'
 }

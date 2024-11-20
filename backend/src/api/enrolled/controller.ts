@@ -16,7 +16,7 @@ export const getEnrolledInstructors = async (req: Request, res: Response) => {
     try {
         const pipeline = [
             {
-                $match: { role: 'Instructor' }  
+                $match: { role: 'Instructor' }
             },
             {
                 $lookup: {
@@ -28,11 +28,11 @@ export const getEnrolledInstructors = async (req: Request, res: Response) => {
             },
             {
                 $project: {
-                    _id: 0, 
-                    totalEnrolled: { 
-                        $ifNull: [{ $sum: "$enrollments.totalEnrolled" }, 0]  
+                    _id: 0,
+                    totalEnrolled: {
+                        $ifNull: [{ $sum: "$enrollments.totalEnrolled" }, 0]
                     },
-                    instructor: {  
+                    instructor: {
                         _id: "$_id",
                         name: "$name",
                         email: "$email",
@@ -47,10 +47,10 @@ export const getEnrolledInstructors = async (req: Request, res: Response) => {
                 }
             },
             {
-                $sort: { totalEnrolled: -1 }  
+                $sort: { totalEnrolled: -1 }
             },
             {
-                $limit: 6 
+                $limit: 6
             }
         ];
 
@@ -102,8 +102,11 @@ export const getEnrolledClassesByEmail = async (req: Request, res: Response) => 
         const email = req.params.email;
         const query = { userEmail: email };
         const pipeline = [
+            { $match: query },
             {
-                $match: query
+                $addFields: {
+                    classesId: { $toObjectId: "$classesId" }
+                }
             },
             {
                 $lookup: {
@@ -113,24 +116,20 @@ export const getEnrolledClassesByEmail = async (req: Request, res: Response) => 
                     as: 'class'
                 }
             },
-            {
-                $unwind: '$classes'
-            },
+            { $unwind: "$class" },
             {
                 $lookup: {
                     from: 'users',
-                    localField: 'classes.instructorEmail',
+                    localField: 'class.instructorEmail',
                     foreignField: 'email',
-                    as: 'Instructor'
+                    as: 'instructor'
                 }
             },
             {
                 $project: {
                     _id: 0,
-                    instructor: {
-                        $arrayElemAt: ['$Instructor', 0]
-                    },
-                    classes: 1
+                    instructor: { $arrayElemAt: ['$instructor', 0] },
+                    class: 1
                 }
             }
         ];

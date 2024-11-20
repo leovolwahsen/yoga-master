@@ -1,20 +1,19 @@
 import { Link, useOutletContext } from "react-router-dom";
 import { IClassItem, IOutletContext } from "../types/interfaces";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAxios } from "../data/useAxios";
 import { Transition } from '@headlessui/react'
-import { AuthContext } from "../utilities/providers/AuthenticationProvider";
+import { useAxiosManagement } from "../data/useAxiosManagement";
 
 
 export const Classes = () => {
   const { isDarkMode } = useOutletContext<IOutletContext>();
   const [classes, setClasses] = useState<IClassItem[]>([]);
-  const [hoveredCard, setHoveredCard] = useState<number | null>(null);
-  const axiosData = useAxios();
+  const [, setEnrolledClasses] = useState([]);
 
-  const {user} = useContext(AuthContext);
-  console.log(`User data with AuthProv: ${user}`);
-  
+  const [hoveredCard, setHoveredCard] = useState<number | null>(null);
+  const axiosManagement = useAxiosManagement();
+  const axiosData = useAxios();
 
   const handleHover = (index: number | null) => {
     setHoveredCard(index);
@@ -26,7 +25,13 @@ export const Classes = () => {
     }).catch((err) => {
       console.error(err)
     })
-  }, [])
+  }, []);
+
+  // add to cart
+  const handleSelect = (_id: string, email: string) => {
+    axiosManagement.get(`/enrolled-classes/${email}`)
+      .then(res => setEnrolledClasses(res.data)).catch(error => console.error(error))
+  }
 
   return (
     <div className={`${isDarkMode ? "bg-black text-white" : "bg-gray-100 text-black"} p-8`}>
@@ -53,7 +58,14 @@ export const Classes = () => {
                     className="object-cover w-full h-full" />
                   <Transition show={hoveredCard === index}>
                     <div className="absolute inset-0 flex items-center justify-center transition duration-300 ease-in data-[closed]:opacity-0">
-                      <button type="button" className="px-4 py-2 text-white disabled:bg-red-300 bg-secondary duration-300 rounded hover:bg-red-700">Add to cart</button>
+                      <button
+                        onClick={() => handleSelect(element?._id, element?.instructorEmail)}
+                        title={element?.availableSeats < 1 ? 'No seats available' : 'Add to cart'}
+                        className="px-4 py-2 text-white disabled:bg-red-300 bg-secondary duration-300 rounded hover:bg-red-700"
+                        disabled={element?.availableSeats < 1}
+                      >
+                        Add to cart
+                      </button>
                     </div>
                   </Transition>
                 </div>
