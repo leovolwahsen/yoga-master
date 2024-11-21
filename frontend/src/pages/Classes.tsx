@@ -4,12 +4,13 @@ import { useEffect, useState } from "react";
 import { useAxios } from "../data/useAxios";
 import { Transition } from '@headlessui/react'
 import { useAxiosManagement } from "../data/useAxiosManagement";
-
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const Classes = () => {
   const { isDarkMode } = useOutletContext<IOutletContext>();
   const [classes, setClasses] = useState<IClassItem[]>([]);
-  const [, setEnrolledClasses] = useState([]);
+  const [enrolledClasses, setEnrolledClasses] = useState<any>([]);
 
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
   const axiosManagement = useAxiosManagement();
@@ -29,12 +30,48 @@ export const Classes = () => {
 
   // add to cart
   const handleSelect = (_id: string, email: string) => {
+
+    if (!email) {
+      return toast.error("Can not add to cart")
+    }
+
+    if (email && _id) {
+      toast.success("Successfully added to cart")
+    }
     axiosManagement.get(`/enrolled-classes/${email}`)
-      .then(res => setEnrolledClasses(res.data)).catch(error => console.error(error))
+      .then(res => setEnrolledClasses(res.data)).catch(error => console.error(error));
+
+    axiosManagement.get(`/cart-item/${_id}?email=${email}`)
+    .then(res => {
+      if (res.data.clasId == _id) {
+        return toast.error("Cart item is already selected!")
+      } else if (enrolledClasses.find((item: { classes: { _id: string; }; }) => item.classes._id === _id)) {
+        return toast.error("It already has been enrolled!")
+      } else {
+        const data = {
+          clasId: _id,
+          userMail: email,
+          data: new Date()
+        }
+
+        toast.promise(axiosManagement.post('/add-to-cart', data),
+        {
+          pending: 'Adding to cart...',
+          success: 'Item added to cart successfully!',
+          error: 'Failed to add item to cart.'
+        }
+      ).then(res => {
+          console.log(res.data);
+        })
+      }
+    });
+
+  
   }
 
   return (
     <div className={`${isDarkMode ? "bg-black text-white" : "bg-gray-100 text-black"} p-8`}>
+      <ToastContainer />
       <div className="md:w-[80%] mx-auto my-20">
         <div>
           <h1 className="text-5xl font-bold text-center text-secondary mb-8">
