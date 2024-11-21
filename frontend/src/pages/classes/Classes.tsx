@@ -1,11 +1,11 @@
 import { Link, useOutletContext } from "react-router-dom";
-import { IClassItem, IOutletContext } from "../types/interfaces";
 import { useEffect, useState } from "react";
-import { useAxios } from "../data/useAxios";
 import { Transition } from '@headlessui/react'
-import { useAxiosManagement } from "../data/useAxiosManagement";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useAxios } from "../../data/useAxios";
+import { useAxiosManagement } from "../../data/useAxiosManagement";
+import { IOutletContext, IClassItem } from "../../types/interfaces";
 
 export const Classes = () => {
   const { isDarkMode } = useOutletContext<IOutletContext>();
@@ -35,9 +35,6 @@ export const Classes = () => {
       return toast.error("Can not add to cart")
     }
 
-    if (email && _id) {
-      toast.success("Successfully added to cart")
-    }
     axiosManagement.get(`/enrolled-classes/${email}`)
       .then(res => setEnrolledClasses(res.data)).catch(error => console.error(error));
 
