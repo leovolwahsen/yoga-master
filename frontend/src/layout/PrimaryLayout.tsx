@@ -7,9 +7,11 @@ export const PrimaryLayout = () => {
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
 
   return (
-    <main className={`overflow-hidden ${isDarkMode ? "dark" : ""}`}>
+    <main className={`flex flex-col min-h-screen overflow-hidden ${isDarkMode ? "dark" : ""}`}>
       <Navbar isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
-      <Outlet context={{ isDarkMode }} />
+      <div className="flex-grow">
+        <Outlet context={{ isDarkMode }} />
+      </div>
       <Footer isDarkMode={isDarkMode} />
     </main>
   );

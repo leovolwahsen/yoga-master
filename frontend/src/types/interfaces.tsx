@@ -27,7 +27,10 @@ export interface IClassItem {
     submitted: string
     totalEnrolled: number
     reason: string | null
-   
+}
+
+export interface IClassItemData {
+    data: IClassItem
 }
 
 export interface IPopularInstructor {
