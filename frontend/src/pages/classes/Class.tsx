@@ -7,22 +7,55 @@ import image5 from "../../assets/profiles/woman.jpg";
 import { FaCheck } from "react-icons/fa6";
 import { GiBackPain, GiMeditation } from "react-icons/gi";
 import { FaHeadSideVirus, FaPlayCircle } from "react-icons/fa"
+import { toast } from "react-toastify";
 
 export const Class = () => {
     const { isDarkMode } = useOutletContext<IOutletContext>();
     const course = useLoaderData() as IClassItemData;
     const [enrolledClasses, setEnrolledClasses] = useState([]);
     const axiosManagement = useAxiosManagement();
-    const axiosData = useAxios();
 
-    console.log(course);
+    const handleSelect = (_id: string, email: string) => {
+
+        if (!email) {
+          return toast.error("Can not add to cart")
+        }
+    
+        axiosManagement.get(`/enrolled-classes/${email}`)
+          .then(res => setEnrolledClasses(res.data)).catch(error => console.error(error));
+    
+        axiosManagement.get(`/cart-item/${_id}?email=${email}`)
+        .then(res => {
+          if (res.data.clasId == _id) {
+            return toast.error("Cart item is already selected!")
+          } else if (enrolledClasses.find((item: { classes: { _id: string; }; }) => item.classes._id === _id)) {
+            return toast.error("It already has been enrolled!")
+          } else {
+            const data = {
+              clasId: _id,
+              userMail: email,
+              data: new Date()
+            }
+    
+            toast.promise(axiosManagement.post('/add-to-cart', data),
+            {
+              pending: 'Adding to cart...',
+              success: 'Item added to cart successfully!',
+              error: 'Failed to add item to cart.'
+            }
+          ).then(res => {
+              console.log(res.data);
+            })
+          }
+        });
+      }
 
     return (
         <div className={`${isDarkMode ? "bg-black text-white" : "bg-gray-100 text-black"} py-8`}>
             <div className="w-full mx-auto">
                 <div className="breadcrumbs py-10 mt-20 bg-cover bg-center bg-no-repeat">
                     <div className="container mx-auto max-w-[90%] text-center">
-                        <h2 className="text-3xl font-bold">Class Details</h2>
+                        <h2 className="text-3xl font-bold">{course?.data?.name}</h2>
                     </div>
                 </div>
             </div>
@@ -175,7 +208,7 @@ export const Class = () => {
                                                     <h4 className="text-2xl">Yoga for Beginners</h4>
                                                 </div>
                                                 <div>
-                                                    <h4 className="text-2xl">You will lern the following</h4>
+                                                    <h4 className="text-2xl">You will learn the following</h4>
                                                     <p className="mt-4">
                                                         In a beginner rejuvenating yoga class, you'll learn foundational poses and techniques to build strength, improve flexibility, and enhance balance. Discover the art of mindful breathing to calm the mind and reduce stress. Guided by an experienced instructor, you'll explore gentle sequences and deep stretches that promote relaxation and physical alignment. You'll also develop an understanding of proper posture, body awareness, and mindfulness practices. Leave each session feeling refreshed, centered, and equipped to integrate yoga into your daily life.
                                                     </p>
@@ -192,11 +225,27 @@ export const Class = () => {
                             <div className="class-side-content space-y-[30px]">
                                 <div className="video-wrapper space-y-5">
                                     <a className="h-[230px] rounded relative block" href="#">
-                                        <img src={course?.data?.videoLink} alt="yoga video" className="block w-full h-full object-cover rounded" />
+                                        <img src={course?.data?.image} alt="yoga video" className="block w-full h-full object-cover rounded-md" />
                                         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-                                            <FaPlayCircle />
+                                            <FaPlayCircle color="red" size={30} />
                                         </div>
                                     </a>
+                                    <h3 className="text-2xl mt-8">{course?.data?.price}€</h3>
+                                    <button onClick={() => handleSelect(course?.data?._id, course?.data?.instructorEmail)} title={course?.data?.availableSeats < 1 ? 'No more seats are available': 'This class still has seats available!'} disabled={course?.data?.availableSeats < 1 } className="btn btn-primary w-full text-center bg-secondary py-2 px-6 text-white rounded-md" >Join class</button>
+                                    <ul className="overview">
+                                        <li className="flex space-x-3 border-b border-[#ECECEC] mb-4 pb-4 last:pb-0 last:border-0">
+                                            <div></div>
+                                        </li>
+                                        <li>
+                                            <div></div>
+                                        </li>
+                                        <li>
+                                            <div></div>
+                                        </li>
+                                        <li>
+                                            <div></div>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>

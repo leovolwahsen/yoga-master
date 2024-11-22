@@ -62,8 +62,6 @@ export const Classes = () => {
         })
       }
     });
-
-  
   }
 
   return (
