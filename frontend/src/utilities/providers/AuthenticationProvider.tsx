@@ -2,7 +2,18 @@ import React, { createContext, useEffect, useState } from "react";
 import { app } from "../../config/firebase.init";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, User } from "firebase/auth";
 import axios from "axios";
-import { IAuthContextValue, IAuthenticationProviderProps } from "../../types/interfaces";
+import { IAuthenticationProviderProps } from "../../types/interfaces";
+
+interface IAuthContextValue {
+    user: User | null;
+    signup: (email: string, password: string) => Promise<void>;
+    login: (email: string, password: string) => Promise<void>;
+    logout: () => Promise<void>;
+    updateUser: (name: string, photo: string) => Promise<void>;
+    googleLogin: () => Promise<void>;
+    error: Error | string | null;
+    setError: React.Dispatch<React.SetStateAction<Error | string | null>>;
+}
 
 const defaultAuthContextValue: IAuthContextValue = {
     user: null,
