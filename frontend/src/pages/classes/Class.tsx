@@ -5,6 +5,8 @@ import { useAxiosManagement } from "../../data/useAxiosManagement";
 import { IClassItemData, IOutletContext } from "../../types/interfaces";
 import image5 from "../../assets/profiles/woman.jpg";
 import { FaCheck } from "react-icons/fa6";
+import { GiBackPain, GiMeditation } from "react-icons/gi";
+import { FaHeadSideVirus, FaPlayCircle } from "react-icons/fa"
 
 export const Class = () => {
     const { isDarkMode } = useOutletContext<IOutletContext>();
@@ -96,37 +98,37 @@ export const Class = () => {
                                                     <ul className="grid sm:grid-cols-2 grid-cols-1 gap-6">
                                                         <li className="flex space-x-3">
                                                             <div className="flex-none relative top-1">
-                                                            <FaCheck size={30} color="green"/>
+                                                                <FaCheck size={30} color="green" />
                                                             </div>
                                                             <div className="flex-1">
-                                                            Improve your physical mobility and build strength through flowing sequences and deep stretches designed for all levels.
+                                                                Improve your physical mobility and build strength through flowing sequences and deep stretches designed for all levels.
                                                             </div>
                                                         </li>
 
                                                         <li className="flex space-x-3">
                                                             <div className="flex-none relative top-1">
-                                                            <FaCheck size={30} color="green"/>
+                                                                <FaCheck size={30} color="green" />
                                                             </div>
                                                             <div className="flex-1">
-                                                            Practice mindful breathing and relaxation techniques that promote a sense of calm and focus, helping you connect mind and body.
+                                                                Practice mindful breathing and relaxation techniques that promote a sense of calm and focus, helping you connect mind and body.
                                                             </div>
                                                         </li>
 
                                                         <li className="flex space-x-3">
                                                             <div className="flex-none relative top-1">
-                                                            <FaCheck size={30} color="green"/>
+                                                                <FaCheck size={30} color="green" />
                                                             </div>
                                                             <div className="flex-1">
-                                                            Release physical and mental tension through guided poses, leaving you feeling refreshed and rejuvenated.
+                                                                Release physical and mental tension through guided poses, leaving you feeling refreshed and rejuvenated.
                                                             </div>
                                                         </li>
 
                                                         <li className="flex space-x-3">
                                                             <div className="flex-none relative top-1">
-                                                            <FaCheck size={30} color="green"/>
+                                                                <FaCheck size={30} color="green" />
                                                             </div>
                                                             <div className="flex-1">
-                                                            Strengthen your core and enhance overall balance, contributing to better posture and alignment in daily life.
+                                                                Strengthen your core and enhance overall balance, contributing to better posture and alignment in daily life.
                                                             </div>
                                                         </li>
                                                     </ul>
@@ -136,11 +138,47 @@ export const Class = () => {
                                                     <h4 className="text-2xl">These skills you will master</h4>
                                                     <div className="grid lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-5 mt-5">
                                                         <div className="bg-white rounded px-5 py-[18px] flex shadow-box2 space-x-[10px] items-center">
+                                                            <div className="flex-none">
+                                                                <FaHeadSideVirus size={30} />
+                                                            </div>
                                                             <span className="flex-none">
-                                                               
+                                                                Reduced stress
+                                                            </span>
+                                                        </div>
+                                                        <div className="bg-white rounded px-5 py-[18px] flex shadow-box2 space-x-[10px] items-center">
+                                                            <div className="flex-none">
+                                                                <GiBackPain size={30} />
+                                                            </div>
+                                                            <span className="flex-none">
+                                                                Strengthening the back
+                                                            </span>
+                                                        </div>
+                                                        <div className="bg-white rounded px-5 py-[18px] flex shadow-box2 space-x-[10px] items-center">
+                                                            <div className="flex-none">
+                                                                <GiMeditation size={30} />
+                                                            </div>
+                                                            <span className="flex-none">
+                                                                Mindfullness
                                                             </span>
                                                         </div>
                                                     </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="tab2" className="tab-content">
+                                            <div>
+                                                <h3 className="text-2xl mt-8">Overview of class</h3>
+                                                <p className="mt-4">
+                                                    Experience a transformative journey in our rejuvenating yoga class, designed for practitioners of all levels. This class combines mindful breathing, fluid movements, and deep stretches to enhance flexibility, strength, and balance while promoting inner peace. Under the guidance of an experienced instructor, you'll practice poses that align your mind and body, release tension, and cultivate mindfulness. Whether seeking relaxation or a gentle challenge, this supportive environment offers a space to recharge and reconnect. Leave feeling refreshed, centered, and ready to embrace life's demands with renewed vitality.
+                                                </p>
+                                                <div className="bg-[#F8F8F8] dark:bg-indigo-500 space-y-6 p-8 rounded-md my-8">
+                                                    <h4 className="text-2xl">Yoga for Beginners</h4>
+                                                </div>
+                                                <div>
+                                                    <h4 className="text-2xl">You will lern the following</h4>
+                                                    <p className="mt-4">
+                                                        In a beginner rejuvenating yoga class, you'll learn foundational poses and techniques to build strength, improve flexibility, and enhance balance. Discover the art of mindful breathing to calm the mind and reduce stress. Guided by an experienced instructor, you'll explore gentle sequences and deep stretches that promote relaxation and physical alignment. You'll also develop an understanding of proper posture, body awareness, and mindfulness practices. Leave each session feeling refreshed, centered, and equipped to integrate yoga into your daily life.
+                                                    </p>
                                                 </div>
                                             </div>
                                         </div>
@@ -150,7 +188,18 @@ export const Class = () => {
                         </div>
 
                         {/* right content */}
-                        <div className="lg:col-span-4 col-span-12 mt-8 md:mt-0"></div>
+                        <div className="lg:col-span-4 col-span-12 mt-8 md:mt-0">
+                            <div className="class-side-content space-y-[30px]">
+                                <div className="video-wrapper space-y-5">
+                                    <a className="h-[230px] rounded relative block" href="#">
+                                        <img src={course?.data?.videoLink} alt="yoga video" className="block w-full h-full object-cover rounded" />
+                                        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                                            <FaPlayCircle />
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
