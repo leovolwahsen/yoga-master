@@ -29,7 +29,7 @@ const router = createBrowserRouter([
         loader: ({params}) => axios(`http://localhost:5000/class/${params.id}`)
       }
     ],
-  }, 
+  },
 ]);
 
 export default router;

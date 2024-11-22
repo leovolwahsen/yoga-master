@@ -4,7 +4,7 @@ import guy from "../../assets/profiles/guy.jpg";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Switch } from "@mui/material";
-import { FaBars } from "react-icons/fa";
+import { FaBars, FaTimes } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { INavbarProps } from "../../types/interfaces";
 
@@ -30,15 +30,11 @@ export const Navbar: React.FC<INavbarProps> = ({ isDarkMode, setIsDarkMode }) =>
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isHome, setIsHome] = useState(false);
-  const [isLogin, setIsLogin] = useState(false);
+  const [, setIsLogin] = useState(false);
   const [scrollPosition, setScrollPosition] = useState(0);
   const [isFixed, setIsFixed] = useState(false);
   const [navBg, setNavBg] = useState("bg-[#15151580]");
   const [user] = useState(true);
-
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
 
   useEffect(() => {
     setIsHome(location.pathname === "/");
@@ -47,32 +43,20 @@ export const Navbar: React.FC<INavbarProps> = ({ isDarkMode, setIsDarkMode }) =>
   }, [location.pathname]);
 
   useEffect(() => {
-    const handleScroll = () => {
-      const currentPosition = window.scrollY;
-      setScrollPosition(currentPosition);
-    };
+    const handleScroll = () => setScrollPosition(window.scrollY);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   useEffect(() => {
-    if (scrollPosition >= 0) {
-      if (isHome) {
-        setNavBg(
-          "bg-white backdrop-filter backdrop-blur-xl bg-opacity-20 dark:text-white text-black"
-        );
-      } else {
-        setNavBg("bg-white dark:bg-black dark:text-white text-black");
-      }
-    } else {
-      setNavBg(
-        `${isHome || location.pathname === "/"
-          ? "bg-transparent"
-          : "bg-white dark:bg-black"
-        } dark:text-white text-white`
-      );
-    }
+    setNavBg(
+      isHome
+        ? "bg-white backdrop-filter backdrop-blur-xl bg-opacity-20 dark:text-white text-black"
+        : "bg-white dark:bg-black dark:text-white text-black"
+    );
   }, [scrollPosition, isHome]);
+
+  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
   const handleLogout = () => {
     console.log("Logout");
@@ -117,77 +101,34 @@ export const Navbar: React.FC<INavbarProps> = ({ isDarkMode, setIsDarkMode }) =>
               onClick={toggleMobileMenu}
               className="text-gray-300 hover:text-white focus:outline-none"
             >
-              <FaBars className="h-6 w-6 hover:text-secondary" />
+              {isMobileMenuOpen ? (
+                <FaTimes className="h-6 w-6 text-secondary" />
+              ) : (
+                <FaBars className="h-6 w-6 hover:text-secondary" />
+              )}
             </button>
           </div>
 
-          {/* Navigation Links */}
+          {/* Desktop Navigation Links */}
           <div className="hidden md:block text-black dark:text-white">
-            <div className="flex">
-              <ul className="ml-10 flex items-center space-x-4 pr-4">
-                {navLinks.map((link, index) => (
-                  <li key={index}>
-                    <NavLink
-                      to={link.route}
-                      className={({ isActive }) =>
-                        `font-bold ${isActive
-                          ? `${isDarkMode ? "text-secondary" : "text-secondary"}`
-                          : `${navBg.includes("bg-transparent") ? "text-white" : "text-black dark:text-white"}`
-                        } hover:text-secondary duration-300`
-                      }
-                    >
-                      {link.name}
-                    </NavLink>
-                  </li>
-                ))}
-
-                {user ? null : isLogin ? (
-                  <li>
-                    <NavLink
-                      to="/register"
-                      className={({ isActive }) =>
-                        `font-bold ${isActive
-                          ? `${isDarkMode ? "text-secondary" : "text-secondary"}`
-                          : `${navBg.includes("bg-transparent") ? "text-white" : "text-black dark:text-white"}`
-                        } hover:text-secondary duration-300`
-                      }
-                    >
-                      Register
-                    </NavLink>
-                  </li>
-                ) : (
-                  <li>
-                    <NavLink
-                      to="/login"
-                      className={({ isActive }) =>
-                        `font-bold ${isActive
-                          ? `${isDarkMode ? "text-secondary" : "text-secondary"}`
-                          : `${navBg.includes("bg-transparent") ? "text-white" : "text-black dark:text-white"}`
-                        } hover:text-secondary duration-300`
-                      }
-                    >
-                      Login
-                    </NavLink>
-                  </li>
-                )}
-
-                {user && (
-                  <li>
-                    <NavLink
-                      to="/dashboard"
-                      className={({ isActive }) =>
-                        `font-bold ${isActive
-                          ? `${isDarkMode ? "text-secondary" : "text-secondary"}`
-                          : `${navBg.includes("bg-transparent") ? "text-white" : "text-black dark:text-white"}`
-                        } hover:text-secondary duration-300`
-                      }
-                    >
-                      Dashboard
-                    </NavLink>
-                  </li>
-                )}
-
-                {user && (
+            <ul className="ml-10 flex items-center space-x-4 pr-4">
+              {navLinks.map((link, index) => (
+                <li key={index}>
+                  <NavLink
+                    to={link.route}
+                    className={({ isActive }) =>
+                      `font-bold ${isActive
+                        ? `${isDarkMode ? "text-secondary" : "text-secondary"}`
+                        : `${isDarkMode ? "text-white" : "text-black"}`
+                      } hover:text-secondary duration-300`
+                    }
+                  >
+                    {link.name}
+                  </NavLink>
+                </li>
+              ))}
+              {user && (
+                <>
                   <li>
                     <img
                       src={guy}
@@ -195,34 +136,67 @@ export const Navbar: React.FC<INavbarProps> = ({ isDarkMode, setIsDarkMode }) =>
                       className="h-[40px] w-[40px] rounded-full"
                     />
                   </li>
-                )}
-
-                {user && (
                   <li>
-                    <NavLink
-                      to=""
+                    <button
                       onClick={handleLogout}
                       className="font-bold px-3 py-2 bg-secondary text-white rounded-xl"
                     >
                       Logout
-                    </NavLink>
+                    </button>
                   </li>
-                )}
-
-                {/* Dark Mode Toggle */}
-                <li>
-                  <ThemeProvider theme={theme}>
-                    <div className="flex flex-col justify-center items-center">
-                      <Switch onChange={() => setIsDarkMode(!isDarkMode)} checked={isDarkMode} />
-                      <h1 className="text-[8px]">Light/Dark</h1>
-                    </div>
-                  </ThemeProvider>
-                </li>
-              </ul>
-            </div>
+                </>
+              )}
+              <li>
+                <ThemeProvider theme={theme}>
+                  <div className="flex flex-col justify-center items-center">
+                    <Switch onChange={() => setIsDarkMode(!isDarkMode)} checked={isDarkMode} />
+                    <h1 className="text-[8px]">Light/Dark</h1>
+                  </div>
+                </ThemeProvider>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
+
+      {/* Mobile Navigation Links */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden absolute top-0 left-0 w-full h-screen bg-white dark:bg-black z-20 flex flex-col items-center justify-center">
+          <ul className="space-y-6">
+            {navLinks.map((link, index) => (
+              <li key={index}>
+                <NavLink
+                  to={link.route}
+                  className={({ isActive }) =>
+                    `text-lg font-bold ${isActive
+                      ? "text-secondary"
+                      : `${isDarkMode ? "text-white" : "text-black"}`
+                    } hover:text-secondary duration-300`
+                  }
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  {link.name}
+                </NavLink>
+              </li>
+            ))}
+            {user && (
+              <li>
+                <button
+                  onClick={handleLogout}
+                  className="font-bold px-3 py-2 bg-secondary text-white rounded-xl"
+                >
+                  Logout
+                </button>
+              </li>
+            )}
+            <li>
+              <ThemeProvider theme={theme}>
+                <Switch onChange={() => setIsDarkMode(!isDarkMode)} checked={isDarkMode} />
+              </ThemeProvider>
+            </li>
+          </ul>
+        </div>
+      )}
     </motion.nav>
   );
 };

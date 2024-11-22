@@ -2,320 +2,159 @@ import { useState } from "react";
 import { useLoaderData, useOutletContext } from "react-router-dom";
 import { useAxiosManagement } from "../../data/useAxiosManagement";
 import { IClassItemData, IOutletContext } from "../../types/interfaces";
-import woman from "../../assets/profiles/woman.jpg"
-import man from "../../assets/profiles/man.jpg";
-import { FaCheck, FaPeopleGroup } from "react-icons/fa6";
+import { FaCheck, FaEuroSign, FaUser, FaLevelUpAlt, FaLanguage, FaBookOpen, FaPlayCircle } from "react-icons/fa";
 import { MdAccessTimeFilled } from "react-icons/md";
+import { FaPeopleGroup } from "react-icons/fa6";
 import { GiBackPain, GiMeditation } from "react-icons/gi";
-import { FaHeadSideVirus, FaBookOpen, FaPlayCircle, FaUser, FaLevelUpAlt, FaLanguage, FaEuroSign } from "react-icons/fa"
+import { FaHeadSideVirus } from "react-icons/fa";
 import { toast } from "react-toastify";
 
 export const Class = () => {
     const { isDarkMode } = useOutletContext<IOutletContext>();
     const course = useLoaderData() as IClassItemData;
     const [enrolledClasses, setEnrolledClasses] = useState([]);
-    const axiosManagement = useAxiosManagement();
     const [selectedRating, setSelectedRating] = useState(0);
+    const axiosManagement = useAxiosManagement();
 
     const handleSelect = (_id: string, email: string) => {
+        if (!email) return toast.error("Can not add to cart");
 
-        if (!email) {
-            return toast.error("Can not add to cart")
-        }
+        axiosManagement.get(`/enrolled-classes/${email}`).then((res) => setEnrolledClasses(res.data));
+        axiosManagement.get(`/cart-item/${_id}?email=${email}`).then((res) => {
+            if (res.data.clasId === _id) {
+                toast.error("Cart item is already selected!");
+            } else if (enrolledClasses.some((item: { classes: { _id: string } }) => item.classes._id === _id)) {
+                toast.error("It already has been enrolled!");
+            } else {
+                const data = { clasId: _id, userMail: email, date: new Date() };
+                toast.promise(axiosManagement.post("/add-to-cart", data), {
+                    pending: "Adding to cart...",
+                    success: "Item added to cart successfully!",
+                    error: "Failed to add item to cart.",
+                });
+            }
+        });
+    };
 
-        axiosManagement.get(`/enrolled-classes/${email}`)
-            .then(res => setEnrolledClasses(res.data)).catch(error => console.error(error));
+    const sections = [
+        { id: "overview", title: "Overview" },
+        { id: "skills", title: "Skills" },
+        { id: "rating", title: "Rating" },
+    ];
 
-        axiosManagement.get(`/cart-item/${_id}?email=${email}`)
-            .then(res => {
-                if (res.data.clasId == _id) {
-                    return toast.error("Cart item is already selected!")
-                } else if (enrolledClasses.find((item: { classes: { _id: string; }; }) => item.classes._id === _id)) {
-                    return toast.error("It already has been enrolled!")
-                } else {
-                    const data = {
-                        clasId: _id,
-                        userMail: email,
-                        data: new Date()
-                    }
+    const details = [
+        { icon: <FaEuroSign />, label: "Price", value: `${course?.data?.price}€` },
+        { icon: <FaUser />, label: "Instructor", value: course?.data?.instructorName },
+        { icon: <FaBookOpen />, label: "Sessions", value: "12" },
+        { icon: <MdAccessTimeFilled />, label: "Time", value: "2 hours, 30 min" },
+        { icon: <FaPeopleGroup />, label: "Enrolled", value: course?.data?.totalEnrolled },
+        { icon: <FaLevelUpAlt />, label: "Class level", value: "Basic" },
+        { icon: <FaLanguage />, label: "Language", value: "English" },
+    ];
 
-                    toast.promise(axiosManagement.post('/add-to-cart', data),
-                        {
-                            pending: 'Adding to cart...',
-                            success: 'Item added to cart successfully!',
-                            error: 'Failed to add item to cart.'
-                        }
-                    ).then(res => {
-                        console.log(res.data);
-                    })
-                }
-            });
-    }
+    const skills = [
+        { icon: <FaHeadSideVirus size={30} />, label: "Reduced stress" },
+        { icon: <GiBackPain size={30} />, label: "Strengthening the back" },
+        { icon: <GiMeditation size={30} />, label: "Mindfulness" },
+    ];
 
     return (
         <div className={`${isDarkMode ? "bg-black text-white" : "bg-gray-100 text-black"} py-8`}>
-            <div className="w-full mx-auto">
+            <div className="w-full mx-auto text-center max-w-[90%]">
                 <div className="breadcrumbs py-10 mt-20 bg-cover bg-center bg-no-repeat">
-                    <div className="container mx-auto max-w-[90%] text-center">
-                        <h2 className="text-3xl font-bold">{course?.data?.name}</h2>
-                    </div>
+                    <h2 className="text-3xl font-bold">{course?.data?.name}</h2>
                 </div>
+                <ul className={`course-tab mb-8 flex space-x-4 border-b pb-2 ${isDarkMode ? "text-white" : "text-black"}`}>
+                    {sections.map(({ id, title }) => (
+                        <li key={id}>
+                            <a href={`#${id}`} className={`py-2 px-4 rounded ${isDarkMode ? "hover:bg-gray-700" : "hover:bg-gray-200"}`}>
+                                {title}
+                            </a>
+                        </li>
+                    ))}
+                </ul>
             </div>
 
-            <div className="nav-tab-wrapper tabs section-padding">
-                <div className="container mx-auto max-w-[90%]">
-                    <div className="grid grid-cols-12 md:gap-[30px]">
-                        {/* left content */}
-                        <div className="lg:col-span-8 col-span-12">
-                            <div className="class-details">
-                                <div className="image-container mb-6">
-                                    <img
-                                        src={course?.data?.image}
-                                        alt="class image"
-                                        className="rounded-md object-cover h-[400px] w-full block mb-6"
-                                    />
+            <div className="container mx-auto max-w-[90%] grid grid-cols-12 md:gap-[30px]">
+                {/* Left Content */}
+                <div className="lg:col-span-8 col-span-12" id="overview">
+                    <img
+                        src={course?.data?.image}
+                        alt="class image"
+                        className="rounded-md object-cover h-[400px] w-full block mb-6"
+                    />
+                    <h3 className="text-2xl mt-8">{course?.data?.description}</h3>
+                    <p className="mt-4">
+                        Discover tranquility and strength in our rejuvenating yoga class. Designed for all levels, this session blends mindful breathing, flowing sequences, and deep stretches to enhance flexibility, balance, and inner peace.
+                    </p>
+
+                    <section className="bg-[#F8F8F8] dark:bg-indigo-500 p-8 rounded-md my-8"  id="skills">
+                        <h4 className="text-2xl">You will learn the following</h4>
+                        <ul className="grid sm:grid-cols-2 grid-cols-1 gap-6 mt-4">
+                            {["Improve your physical mobility and build strength.", "Practice mindful breathing techniques.", "Release tension through guided poses.", "Enhance core strength and posture."].map((item, index) => (
+                                <li key={index} className="flex space-x-3">
+                                    <FaCheck size={30} color="green" />
+                                    <span>{item}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </section>
+
+                    <section>
+                        <h4 className="text-2xl">These skills you will master</h4>
+                        <div className={`grid lg:grid-cols-3 sm:grid-cols-2 gap-5 mt-5 ${isDarkMode ? "text-white bg-gray-800" : "text-black bg-white"}`}>
+                            {skills.map(({ icon, label }, index) => (
+                                <div key={index} className="rounded px-5 py-[18px] flex shadow-box2 space-x-[10px] items-center">
+                                    {icon}
+                                    <span>{label}</span>
                                 </div>
-
-                                <h2 className="text-3xl mb-2">{course?.data?.description}</h2>
-
-                                <div className="mt-6 sm:flex lg:space-x-16 sm:space-x-5 space-y-5 sm:space-y-0 items-center">
-                                    <div className="flex space-x-4 items-center group">
-                                        <div className="flex-none">
-                                            <div className="h-12 w-12 rounded">
-                                                <img
-                                                    src={course?.data?.instructorName == "Maya" ? woman : man}
-                                                    alt="user image"
-                                                    className="w-full h-full rounded"
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="flex-1">
-                                            <p className="text-secondary">
-                                                Instructor:
-                                                <a href="#" className={`ml-1 ${isDarkMode ? "text-white" : "text-black"}`}>
-                                                    {course?.data?.instructorName}
-                                                </a>
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <span className="text-secondary">
-                                            Latest update:
-                                            <a href="#" className={`ml-1 ${isDarkMode ? "text-white" : "text-black"}`}>
-                                                {new Date(course?.data?.submitted).toLocaleDateString()}
-                                            </a>
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <div className="nav-tab-wrapper mt-12">
-                                    <ul id="tabs-nav" className="course-tab mb-8">
-                                        <li>
-                                            <a href="#curriculum">Curriculum</a>
-                                        </li>
-                                        <li>
-                                            <a href="#overview">Overview</a>
-                                        </li>
-                                        <li>
-                                            <a href="#skills">Skills</a>
-                                        </li>
-                                        <li>
-                                            <a href="#rating">Rating</a>
-                                        </li>
-                                    </ul>
-
-                                    <div id="tabs-content">
-                                        <div id="tab1" className="tab-content">
-                                            <div>
-                                                <h3 className="text-2xl mt-8" id="curriculum">Class description</h3>
-                                                <p className="mt-4">Discover tranquility and strength in our rejuvenating yoga class. Designed for all levels, this session blends mindful breathing, flowing sequences, and deep stretches to enhance flexibility, balance, and inner peace. Guided by an experienced instructor, you'll explore poses that align mind and body, releasing tension and cultivating mindfulness. Whether you're seeking relaxation or a gentle challenge, our supportive environment invites you to connect with your practice. Leave feeling refreshed, centered, and ready to embrace the day ahead.</p>
-                                                <div className="bg-[#F8F8F8] dark:bg-indigo-500 space-y-6 p-8 rounded-md my-8" id="overview">
-                                                    <h4 className="text-2xl">You will learn the following</h4>
-                                                    <ul className="grid sm:grid-cols-2 grid-cols-1 gap-6">
-                                                        <li className="flex space-x-3">
-                                                            <div className="flex-none relative top-1">
-                                                                <FaCheck size={30} color="green" />
-                                                            </div>
-                                                            <div className="flex-1">
-                                                                Improve your physical mobility and build strength through flowing sequences and deep stretches designed for all levels.
-                                                            </div>
-                                                        </li>
-
-                                                        <li className="flex space-x-3">
-                                                            <div className="flex-none relative top-1">
-                                                                <FaCheck size={30} color="green" />
-                                                            </div>
-                                                            <div className="flex-1">
-                                                                Practice mindful breathing and relaxation techniques that promote a sense of calm and focus, helping you connect mind and body.
-                                                            </div>
-                                                        </li>
-
-                                                        <li className="flex space-x-3" id="skills">
-                                                            <div className="flex-none relative top-1">
-                                                                <FaCheck size={30} color="green" />
-                                                            </div>
-                                                            <div className="flex-1">
-                                                                Release physical and mental tension through guided poses, leaving you feeling refreshed and rejuvenated.
-                                                            </div>
-                                                        </li>
-
-                                                        <li className="flex space-x-3">
-                                                            <div className="flex-none relative top-1">
-                                                                <FaCheck size={30} color="green" />
-                                                            </div>
-                                                            <div className="flex-1">
-                                                                Strengthen your core and enhance overall balance, contributing to better posture and alignment in daily life.
-                                                            </div>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-
-                                                <div>
-                                                    <h4 className="text-2xl">These skills you will master</h4>
-                                                    <div
-                                                        className={`grid lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-5 mt-5 ${isDarkMode ? "text-white bg-gray-800" : "text-black bg-white"
-                                                            }`}
-                                                    >
-                                                        <div className="rounded px-5 py-[18px] flex shadow-box2 space-x-[10px] items-center">
-                                                            <div className="flex-none">
-                                                                <FaHeadSideVirus size={30} />
-                                                            </div>
-                                                            <span className="flex-none">Reduced stress</span>
-                                                        </div>
-                                                        <div className="rounded px-5 py-[18px] flex shadow-box2 space-x-[10px] items-center">
-                                                            <div className="flex-none">
-                                                                <GiBackPain size={30} />
-                                                            </div>
-                                                            <span className="flex-none">Strengthening the back</span>
-                                                        </div>
-                                                        <div className="rounded px-5 py-[18px] flex shadow-box2 space-x-[10px] items-center">
-                                                            <div className="flex-none">
-                                                                <GiMeditation size={30} />
-                                                            </div>
-                                                            <span className="flex-none">Mindfullness</span>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div id="tab2" className="tab-content">
-                                            <div>
-                                                <h3 className="text-2xl mt-8">Overview of class</h3>
-                                                <p className="mt-4">
-                                                    Experience a transformative journey in our rejuvenating yoga class, designed for practitioners of all levels. This class combines mindful breathing, fluid movements, and deep stretches to enhance flexibility, strength, and balance while promoting inner peace. Under the guidance of an experienced instructor, you'll practice poses that align your mind and body, release tension, and cultivate mindfulness. Whether seeking relaxation or a gentle challenge, this supportive environment offers a space to recharge and reconnect. Leave feeling refreshed, centered, and ready to embrace life's demands with renewed vitality.
-                                                </p>
-                                                <div className="bg-[#F8F8F8] dark:bg-indigo-500 space-y-6 p-8 rounded-md my-8">
-                                                    <h4 className="text-2xl">Yoga for Beginners</h4>
-                                                </div>
-                                                <div>
-                                                    <h4 className="text-2xl">You will learn the following</h4>
-                                                    <p className="mt-4">
-                                                        In a beginner rejuvenating yoga class, you'll learn foundational poses and techniques to build strength, improve flexibility, and enhance balance. Discover the art of mindful breathing to calm the mind and reduce stress. Guided by an experienced instructor, you'll explore gentle sequences and deep stretches that promote relaxation and physical alignment. You'll also develop an understanding of proper posture, body awareness, and mindfulness practices. Leave each session feeling refreshed, centered, and equipped to integrate yoga into your daily life.
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            ))}
                         </div>
+                    </section>
+                </div>
 
-                        {/* right content */}
-                        <div className={`lg:col-span-4 col-span-12 mt-8 md:mt-0 ${isDarkMode ? "text-white" : "text-black"}`} id="rating">
-                            <div className="class-side-content space-y-[30px]">
-                                <div className="video-wrapper space-y-5">
-                                    <a className="h-[230px] rounded relative block" href="#">
-                                        <img src={course?.data?.image} alt="yoga video" className="block w-full h-full object-cover rounded-md" />
-                                        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-                                            <FaPlayCircle color="red" size={30} />
-                                        </div>
-                                    </a>
-                                    <button onClick={() => handleSelect(course?.data?._id, course?.data?.instructorEmail)} title={course?.data?.availableSeats < 1 ? 'No more seats are available' : 'This class still has seats available!'} disabled={course?.data?.availableSeats < 1} className="btn btn-primary w-full text-center bg-secondary py-2 px-6 text-white rounded-md" >Join class</button>
-                                    <ul className="overview">
-                                        <li className="flex space-x-3 border-b border-[#ECECEC] mb-4 pb-4 last:pb-0 last:border-0">
-                                            <div className="flex-1 space-x-3 flex items-center">
-                                                <FaEuroSign className="inline-flex" />
-                                                <div className="font-semibold">
-                                                    Price
-                                                </div>
-                                            </div>
-                                            <div className="flex-none">{course?.data?.price}€</div>
-                                        </li>
-                                        <li className="flex space-x-3 border-b border-[#ECECEC] mb-4 pb-4 last:pb-0 last:border-0">
-                                            <div className="flex-1 space-x-3 flex items-center">
-                                                <FaUser className="inline-flex" />
-                                                <div className="font-semibold">
-                                                    Instructor
-                                                </div>
-                                            </div>
-                                            <div className="flex-none">{course?.data?.instructorName}</div>
-                                        </li>
-                                        <li className="flex space-x-3 border-b border-[#ECECEC] mb-4 pb-4 last:pb-0 last:border-0">
-                                            <div className="flex-1 space-x-3 flex items-center">
-                                                <FaBookOpen className="inline-flex" />
-                                                <div className="font-semibold">
-                                                    Sessions
-                                                </div>
-                                            </div>
-                                            <div className="flex-none">12</div>
-                                        </li>
-                                        <li className="flex space-x-3 border-b border-[#ECECEC] mb-4 pb-4 last:pb-0 last:border-0">
-                                            <div className="flex-1 space-x-3 flex items-center">
-                                                <MdAccessTimeFilled className="inline-flex" />
-                                                <div className="font-semibold">
-                                                    Time
-                                                </div>
-                                            </div>
-                                            <div className="flex-none">2 hours, 30 min</div>
-                                        </li>
-                                        <li className="flex space-x-3 border-b border-[#ECECEC] mb-4 pb-4 last:pb-0 last:border-0">
-                                            <div className="flex-1 space-x-3 flex items-center">
-                                                <FaPeopleGroup className="inline-flex" />
-                                                <div className="font-semibold">
-                                                    Enrolled
-                                                </div>
-                                            </div>
-                                            <div className="flex-none">{course?.data?.totalEnrolled}</div>
-                                        </li>
-                                        <li className="flex space-x-3 border-b border-[#ECECEC] mb-4 pb-4 last:pb-0 last:border-0">
-                                            <div className="flex-1 space-x-3 flex items-center">
-                                                <FaLevelUpAlt className="inline-flex" />
-                                                <div className="font-semibold">
-                                                    Class level
-                                                </div>
-                                            </div>
-                                            <div className="flex-none">Basic</div>
-                                        </li>
-                                        <li className="flex space-x-3 border-b border-[#ECECEC] mb-4 pb-4 last:pb-0 last:border-0">
-                                            <div className="flex-1 space-x-3 flex items-center">
-                                                <FaLanguage className="inline-flex" />
-                                                <div className="font-semibold">
-                                                    Language
-                                                </div>
-                                            </div>
-                                            <div className="flex-none">English</div>
-                                        </li>
-                                    </ul>
-                                    <div className={`rating-section rounded px-5 py-[18px] flex flex-col shadow-box2 space-y-5 items-center ${isDarkMode ? "text-white bg-gray-800" : "text-black bg-white"}`}>
-                                        <h4 className="text-xl font-semibold">Rate this Class</h4>
-                                        <div className="flex space-x-2">
-                                            {Array.from({ length: 5 }).map((_, index) => (
-                                                <span
-                                                    key={index}
-                                                    className={`cursor-pointer text-gray-400 hover:text-yellow-500 ${index < selectedRating ? "text-yellow-500" : ""
-                                                        }`}
-                                                    onClick={() => setSelectedRating(index + 1)}
-                                                >
-                                                    ★
-                                                </span>
-                                            ))}
-                                        </div>
-                                        {selectedRating > 0 && (
-                                            <p className="text-gray-500">You rated this class {selectedRating} out of 5.</p>
-                                        )}
-                                    </div>
+                {/* Right Content */}
+                <div className={`lg:col-span-4 col-span-12 ${isDarkMode ? "text-white" : "text-black"}`} id="rating">
+                    <div className="class-side-content space-y-[30px]">
+                        <div className="video-wrapper space-y-5">
+                            <a className="h-[230px] rounded block relative">
+                                <img src={course?.data?.image} alt="yoga video" className="block w-full h-full object-cover rounded-md" />
+                                <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                                    <FaPlayCircle color="red" size={50} />
                                 </div>
+                            </a>
+                            <button
+                                onClick={() => handleSelect(course?.data?._id, course?.data?.instructorEmail)}
+                                className="btn btn-primary w-full text-center bg-secondary py-2 px-6 text-white rounded-md"
+                                disabled={course?.data?.availableSeats < 1}
+                            >
+                                Join class
+                            </button>
+                            <ul>
+                                {details.map(({ icon, label, value }, index) => (
+                                    <li key={index} className="flex space-x-3 border-b mb-4 pb-4">
+                                        <div className="flex-1 flex space-x-3 items-center">
+                                            {icon}
+                                            <span className="font-semibold">{label}</span>
+                                        </div>
+                                        <span>{value}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                            <div className={`rating-section p-5 rounded ${isDarkMode ? "text-white bg-gray-800" : "text-black bg-white"}`}>
+                                <h4 className="text-xl font-semibold">Rate this Class</h4>
+                                <div className="flex space-x-2 mt-2">
+                                    {[...Array(5)].map((_, index) => (
+                                        <span
+                                            key={index}
+                                            onClick={() => setSelectedRating(index + 1)}
+                                            className={`cursor-pointer ${index < selectedRating ? "text-yellow-500" : "text-gray-400"}`}
+                                        >
+                                            ★
+                                        </span>
+                                    ))}
+                                </div>
+                                {selectedRating > 0 && <p className="text-gray-500 mt-2">You rated this class {selectedRating} out of 5.</p>}
                             </div>
                         </div>
                     </div>
