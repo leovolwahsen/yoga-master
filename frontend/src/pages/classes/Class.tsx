@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useLoaderData, useOutletContext } from "react-router-dom";
-import { useAxios } from "../../data/useAxios";
 import { useAxiosManagement } from "../../data/useAxiosManagement";
 import { IClassItemData, IOutletContext } from "../../types/interfaces";
-import image5 from "../../assets/profiles/woman.jpg";
-import { FaCheck } from "react-icons/fa6";
+import woman from "../../assets/profiles/woman.jpg"
+import man from "../../assets/profiles/man.jpg";
+import { FaCheck, FaPeopleGroup } from "react-icons/fa6";
+import { MdAccessTimeFilled } from "react-icons/md";
 import { GiBackPain, GiMeditation } from "react-icons/gi";
-import { FaHeadSideVirus, FaPlayCircle } from "react-icons/fa"
+import { FaHeadSideVirus, FaBookOpen, FaPlayCircle, FaUser, FaLevelUpAlt, FaLanguage, FaEuroSign } from "react-icons/fa"
 import { toast } from "react-toastify";
 
 export const Class = () => {
@@ -14,41 +15,42 @@ export const Class = () => {
     const course = useLoaderData() as IClassItemData;
     const [enrolledClasses, setEnrolledClasses] = useState([]);
     const axiosManagement = useAxiosManagement();
+    const [selectedRating, setSelectedRating] = useState(0);
 
     const handleSelect = (_id: string, email: string) => {
 
         if (!email) {
-          return toast.error("Can not add to cart")
+            return toast.error("Can not add to cart")
         }
-    
+
         axiosManagement.get(`/enrolled-classes/${email}`)
-          .then(res => setEnrolledClasses(res.data)).catch(error => console.error(error));
-    
+            .then(res => setEnrolledClasses(res.data)).catch(error => console.error(error));
+
         axiosManagement.get(`/cart-item/${_id}?email=${email}`)
-        .then(res => {
-          if (res.data.clasId == _id) {
-            return toast.error("Cart item is already selected!")
-          } else if (enrolledClasses.find((item: { classes: { _id: string; }; }) => item.classes._id === _id)) {
-            return toast.error("It already has been enrolled!")
-          } else {
-            const data = {
-              clasId: _id,
-              userMail: email,
-              data: new Date()
-            }
-    
-            toast.promise(axiosManagement.post('/add-to-cart', data),
-            {
-              pending: 'Adding to cart...',
-              success: 'Item added to cart successfully!',
-              error: 'Failed to add item to cart.'
-            }
-          ).then(res => {
-              console.log(res.data);
-            })
-          }
-        });
-      }
+            .then(res => {
+                if (res.data.clasId == _id) {
+                    return toast.error("Cart item is already selected!")
+                } else if (enrolledClasses.find((item: { classes: { _id: string; }; }) => item.classes._id === _id)) {
+                    return toast.error("It already has been enrolled!")
+                } else {
+                    const data = {
+                        clasId: _id,
+                        userMail: email,
+                        data: new Date()
+                    }
+
+                    toast.promise(axiosManagement.post('/add-to-cart', data),
+                        {
+                            pending: 'Adding to cart...',
+                            success: 'Item added to cart successfully!',
+                            error: 'Failed to add item to cart.'
+                        }
+                    ).then(res => {
+                        console.log(res.data);
+                    })
+                }
+            });
+    }
 
     return (
         <div className={`${isDarkMode ? "bg-black text-white" : "bg-gray-100 text-black"} py-8`}>
@@ -81,16 +83,16 @@ export const Class = () => {
                                         <div className="flex-none">
                                             <div className="h-12 w-12 rounded">
                                                 <img
-                                                    src={image5}
+                                                    src={course?.data?.instructorName == "Maya" ? woman : man}
                                                     alt="user image"
-                                                    className="object-cover w-full h-full rounded"
+                                                    className="w-full h-full rounded"
                                                 />
                                             </div>
                                         </div>
                                         <div className="flex-1">
                                             <p className="text-secondary">
                                                 Instructor:
-                                                <a href="#" className="text-black ml-1">
+                                                <a href="#" className={`ml-1 ${isDarkMode ? "text-white" : "text-black"}`}>
                                                     {course?.data?.instructorName}
                                                 </a>
                                             </p>
@@ -99,7 +101,7 @@ export const Class = () => {
                                     <div>
                                         <span className="text-secondary">
                                             Latest update:
-                                            <a href="#" className="text-black ml-1">
+                                            <a href="#" className={`ml-1 ${isDarkMode ? "text-white" : "text-black"}`}>
                                                 {new Date(course?.data?.submitted).toLocaleDateString()}
                                             </a>
                                         </span>
@@ -108,25 +110,26 @@ export const Class = () => {
 
                                 <div className="nav-tab-wrapper mt-12">
                                     <ul id="tabs-nav" className="course-tab mb-8">
-                                        <li className="active">
-                                            <a href="#tab1">Overview</a>
+                                        <li>
+                                            <a href="#curriculum">Curriculum</a>
                                         </li>
                                         <li>
-                                            <a href="#tab2">Curriculum</a>
+                                            <a href="#overview">Overview</a>
                                         </li>
                                         <li>
-                                            <a href="#tab3">Instructor</a>
+                                            <a href="#skills">Skills</a>
                                         </li>
                                         <li>
-                                            <a href="#tab4">Rating</a>
+                                            <a href="#rating">Rating</a>
                                         </li>
                                     </ul>
+
                                     <div id="tabs-content">
                                         <div id="tab1" className="tab-content">
                                             <div>
-                                                <h3 className="text-2xl mt-8">Class description</h3>
+                                                <h3 className="text-2xl mt-8" id="curriculum">Class description</h3>
                                                 <p className="mt-4">Discover tranquility and strength in our rejuvenating yoga class. Designed for all levels, this session blends mindful breathing, flowing sequences, and deep stretches to enhance flexibility, balance, and inner peace. Guided by an experienced instructor, you'll explore poses that align mind and body, releasing tension and cultivating mindfulness. Whether you're seeking relaxation or a gentle challenge, our supportive environment invites you to connect with your practice. Leave feeling refreshed, centered, and ready to embrace the day ahead.</p>
-                                                <div className="bg-[#F8F8F8] dark:bg-indigo-500 space-y-6 p-8 rounded-md my-8">
+                                                <div className="bg-[#F8F8F8] dark:bg-indigo-500 space-y-6 p-8 rounded-md my-8" id="overview">
                                                     <h4 className="text-2xl">You will learn the following</h4>
                                                     <ul className="grid sm:grid-cols-2 grid-cols-1 gap-6">
                                                         <li className="flex space-x-3">
@@ -147,7 +150,7 @@ export const Class = () => {
                                                             </div>
                                                         </li>
 
-                                                        <li className="flex space-x-3">
+                                                        <li className="flex space-x-3" id="skills">
                                                             <div className="flex-none relative top-1">
                                                                 <FaCheck size={30} color="green" />
                                                             </div>
@@ -169,32 +172,30 @@ export const Class = () => {
 
                                                 <div>
                                                     <h4 className="text-2xl">These skills you will master</h4>
-                                                    <div className="grid lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-5 mt-5">
-                                                        <div className="bg-white rounded px-5 py-[18px] flex shadow-box2 space-x-[10px] items-center">
+                                                    <div
+                                                        className={`grid lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-5 mt-5 ${isDarkMode ? "text-white bg-gray-800" : "text-black bg-white"
+                                                            }`}
+                                                    >
+                                                        <div className="rounded px-5 py-[18px] flex shadow-box2 space-x-[10px] items-center">
                                                             <div className="flex-none">
                                                                 <FaHeadSideVirus size={30} />
                                                             </div>
-                                                            <span className="flex-none">
-                                                                Reduced stress
-                                                            </span>
+                                                            <span className="flex-none">Reduced stress</span>
                                                         </div>
-                                                        <div className="bg-white rounded px-5 py-[18px] flex shadow-box2 space-x-[10px] items-center">
+                                                        <div className="rounded px-5 py-[18px] flex shadow-box2 space-x-[10px] items-center">
                                                             <div className="flex-none">
                                                                 <GiBackPain size={30} />
                                                             </div>
-                                                            <span className="flex-none">
-                                                                Strengthening the back
-                                                            </span>
+                                                            <span className="flex-none">Strengthening the back</span>
                                                         </div>
-                                                        <div className="bg-white rounded px-5 py-[18px] flex shadow-box2 space-x-[10px] items-center">
+                                                        <div className="rounded px-5 py-[18px] flex shadow-box2 space-x-[10px] items-center">
                                                             <div className="flex-none">
                                                                 <GiMeditation size={30} />
                                                             </div>
-                                                            <span className="flex-none">
-                                                                Mindfullness
-                                                            </span>
+                                                            <span className="flex-none">Mindfullness</span>
                                                         </div>
                                                     </div>
+
                                                 </div>
                                             </div>
                                         </div>
@@ -221,7 +222,7 @@ export const Class = () => {
                         </div>
 
                         {/* right content */}
-                        <div className="lg:col-span-4 col-span-12 mt-8 md:mt-0">
+                        <div className={`lg:col-span-4 col-span-12 mt-8 md:mt-0 ${isDarkMode ? "text-white" : "text-black"}`} id="rating">
                             <div className="class-side-content space-y-[30px]">
                                 <div className="video-wrapper space-y-5">
                                     <a className="h-[230px] rounded relative block" href="#">
@@ -230,22 +231,90 @@ export const Class = () => {
                                             <FaPlayCircle color="red" size={30} />
                                         </div>
                                     </a>
-                                    <h3 className="text-2xl mt-8">{course?.data?.price}€</h3>
-                                    <button onClick={() => handleSelect(course?.data?._id, course?.data?.instructorEmail)} title={course?.data?.availableSeats < 1 ? 'No more seats are available': 'This class still has seats available!'} disabled={course?.data?.availableSeats < 1 } className="btn btn-primary w-full text-center bg-secondary py-2 px-6 text-white rounded-md" >Join class</button>
+                                    <button onClick={() => handleSelect(course?.data?._id, course?.data?.instructorEmail)} title={course?.data?.availableSeats < 1 ? 'No more seats are available' : 'This class still has seats available!'} disabled={course?.data?.availableSeats < 1} className="btn btn-primary w-full text-center bg-secondary py-2 px-6 text-white rounded-md" >Join class</button>
                                     <ul className="overview">
                                         <li className="flex space-x-3 border-b border-[#ECECEC] mb-4 pb-4 last:pb-0 last:border-0">
-                                            <div></div>
+                                            <div className="flex-1 space-x-3 flex items-center">
+                                                <FaEuroSign className="inline-flex" />
+                                                <div className="font-semibold">
+                                                    Price
+                                                </div>
+                                            </div>
+                                            <div className="flex-none">{course?.data?.price}€</div>
                                         </li>
-                                        <li>
-                                            <div></div>
+                                        <li className="flex space-x-3 border-b border-[#ECECEC] mb-4 pb-4 last:pb-0 last:border-0">
+                                            <div className="flex-1 space-x-3 flex items-center">
+                                                <FaUser className="inline-flex" />
+                                                <div className="font-semibold">
+                                                    Instructor
+                                                </div>
+                                            </div>
+                                            <div className="flex-none">{course?.data?.instructorName}</div>
                                         </li>
-                                        <li>
-                                            <div></div>
+                                        <li className="flex space-x-3 border-b border-[#ECECEC] mb-4 pb-4 last:pb-0 last:border-0">
+                                            <div className="flex-1 space-x-3 flex items-center">
+                                                <FaBookOpen className="inline-flex" />
+                                                <div className="font-semibold">
+                                                    Sessions
+                                                </div>
+                                            </div>
+                                            <div className="flex-none">12</div>
                                         </li>
-                                        <li>
-                                            <div></div>
+                                        <li className="flex space-x-3 border-b border-[#ECECEC] mb-4 pb-4 last:pb-0 last:border-0">
+                                            <div className="flex-1 space-x-3 flex items-center">
+                                                <MdAccessTimeFilled className="inline-flex" />
+                                                <div className="font-semibold">
+                                                    Time
+                                                </div>
+                                            </div>
+                                            <div className="flex-none">2 hours, 30 min</div>
+                                        </li>
+                                        <li className="flex space-x-3 border-b border-[#ECECEC] mb-4 pb-4 last:pb-0 last:border-0">
+                                            <div className="flex-1 space-x-3 flex items-center">
+                                                <FaPeopleGroup className="inline-flex" />
+                                                <div className="font-semibold">
+                                                    Enrolled
+                                                </div>
+                                            </div>
+                                            <div className="flex-none">{course?.data?.totalEnrolled}</div>
+                                        </li>
+                                        <li className="flex space-x-3 border-b border-[#ECECEC] mb-4 pb-4 last:pb-0 last:border-0">
+                                            <div className="flex-1 space-x-3 flex items-center">
+                                                <FaLevelUpAlt className="inline-flex" />
+                                                <div className="font-semibold">
+                                                    Class level
+                                                </div>
+                                            </div>
+                                            <div className="flex-none">Basic</div>
+                                        </li>
+                                        <li className="flex space-x-3 border-b border-[#ECECEC] mb-4 pb-4 last:pb-0 last:border-0">
+                                            <div className="flex-1 space-x-3 flex items-center">
+                                                <FaLanguage className="inline-flex" />
+                                                <div className="font-semibold">
+                                                    Language
+                                                </div>
+                                            </div>
+                                            <div className="flex-none">English</div>
                                         </li>
                                     </ul>
+                                    <div className={`rating-section rounded px-5 py-[18px] flex flex-col shadow-box2 space-y-5 items-center ${isDarkMode ? "text-white bg-gray-800" : "text-black bg-white"}`}>
+                                        <h4 className="text-xl font-semibold">Rate this Class</h4>
+                                        <div className="flex space-x-2">
+                                            {Array.from({ length: 5 }).map((_, index) => (
+                                                <span
+                                                    key={index}
+                                                    className={`cursor-pointer text-gray-400 hover:text-yellow-500 ${index < selectedRating ? "text-yellow-500" : ""
+                                                        }`}
+                                                    onClick={() => setSelectedRating(index + 1)}
+                                                >
+                                                    ★
+                                                </span>
+                                            ))}
+                                        </div>
+                                        {selectedRating > 0 && (
+                                            <p className="text-gray-500">You rated this class {selectedRating} out of 5.</p>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         </div>

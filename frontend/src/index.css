@@ -30,3 +30,7 @@ body {
   background: #fcb928f1;
   transition: 1s;
 }
+
+html {
+  scroll-behavior: smooth;
+}
