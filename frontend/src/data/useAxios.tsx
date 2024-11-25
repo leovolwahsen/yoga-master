@@ -3,8 +3,7 @@ import { useEffect } from "react";
 
 export const useAxios = () => {
   const axiosInstance = axios.create({
-    baseURL: 'http://localhost:5000/'
-    // baseURL: 'https://yoga-master-ln96.onrender.com'
+    baseURL: 'https://yoga-master-ln96.onrender.com'
   });
 
   // Interceptors
