@@ -1,11 +1,13 @@
 import { FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa";
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { useAxios } from "../../data/useAxios";
 import { useEffect, useState } from "react";
 import { IFooterProps, IHandleSubscription } from "../../types/interfaces";
 
-export const Footer = ({ isDarkMode }: IFooterProps) => {
+interface FooterProps extends IFooterProps {
+  triggerToast: (type: "success" | "error", message: string) => void;
+}
+
+export const Footer = ({ isDarkMode, triggerToast }: FooterProps) => {
   const axiosInstance = useAxios();
   const [isLoading, setIsLoading] = useState(true);
   const [email, setEmail] = useState<string>("");
@@ -19,11 +21,11 @@ export const Footer = ({ isDarkMode }: IFooterProps) => {
     try {
       const response = await axiosInstance.post("/new-subscribed", { email });
       if (response.status === 201) {
-        toast.success("You have successfully subscribed to our newsletter!", { autoClose: false });
-        // setEmail("");
+        triggerToast("success", "You have successfully subscribed to our newsletter!");
+        setEmail("");
       }
     } catch (err) {
-      toast.error("Failed to subscribe to newsletter!");
+      triggerToast("error", "Failed to subscribe to newsletter!");
       if (err instanceof Error) {
         console.error(err.message);
       } else {
@@ -55,7 +57,6 @@ export const Footer = ({ isDarkMode }: IFooterProps) => {
 
   return (
     <div className={`w-full ${isDarkMode ? "bg-black text-white" : "bg-gray-100 text-black"}`}>
-      <ToastContainer />
       <div className="w-[90%] mx-auto">
         {/* Stats Section */}
         <div className={`grid grid-cols-2 md:grid-cols-4 py-12 ${isDarkMode ? "bg-gray-800" : "bg-blue-800"} text-white`}>
