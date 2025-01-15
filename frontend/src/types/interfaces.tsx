@@ -83,3 +83,17 @@ export interface IUser {
     email: string
     role: 'admin' | 'instructor' | 'student'
 }
+
+export interface IFooterProps {
+    isDarkMode: boolean;
+}
+
+export interface IHandleSubscription {
+    preventDefault: () => void;
+}
+
+export interface IImage {
+    homepage: {
+        image3: string;
+    };
+}

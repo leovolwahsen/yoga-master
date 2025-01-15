@@ -3,27 +3,24 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useAxios } from "../../data/useAxios";
 import { useEffect, useState } from "react";
+import { IFooterProps, IHandleSubscription } from "../../types/interfaces";
 
-interface FooterProps {
-  isDarkMode: boolean;
-}
-
-export const Footer = ({ isDarkMode }: FooterProps) => {
+export const Footer = ({ isDarkMode }: IFooterProps) => {
   const axiosInstance = useAxios();
   const [isLoading, setIsLoading] = useState(true);
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState<string>("");
 
   useEffect(() => {
     setIsLoading(false);
   }, []);
 
-  const handleAttendeeSubmit = async (e: { preventDefault: () => void; }) => {
+  const handleNewsletterSubscription = async (e: IHandleSubscription) => {
     e.preventDefault();
     try {
       const response = await axiosInstance.post("/new-subscribed", { email });
       if (response.status === 201) {
         toast.success("You have successfully subscribed to our newsletter!", { autoClose: false });
-        setEmail("");
+        // setEmail("");
       }
     } catch (err) {
       toast.error("Failed to subscribe to newsletter!");
@@ -72,7 +69,7 @@ export const Footer = ({ isDarkMode }: FooterProps) => {
 
         {/* Newsletter Section */}
         <form
-          onSubmit={handleAttendeeSubmit}
+          onSubmit={handleNewsletterSubscription}
           className="max-w-lg mx-auto p-6 mt-6 border border-gray-300 rounded-lg shadow-md"
         >
           <h3 className="text-2xl font-bold text-center mb-4">Subscribe to our Newsletter</h3>

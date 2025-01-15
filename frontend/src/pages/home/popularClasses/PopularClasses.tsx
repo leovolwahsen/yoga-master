@@ -3,15 +3,16 @@ import { useAxios } from "../../../data/useAxios";
 import { Card } from "./Card";
 
 export const PopularClasses = () => {
-    const axiosData = useAxios();
+    const axiosInstance = useAxios();
     const [classes, setClasses] = useState([]);
+ 
     useEffect(() => {
-        const axiosClasses = async () => {
-            const response = await axiosData.get("/classes");
-            setClasses(response.data)
-        }
-        axiosClasses()
-    }, []);
+        axiosInstance.get("/classes").then((res) => {
+            setClasses(res.data);
+        }).catch((err) => {
+            console.error(`Error fetching classes data: ${err}`);	
+        });
+    }, [axiosInstance]);
 
   return (
     <div className="md:w-[80%] mx-auto my-36">

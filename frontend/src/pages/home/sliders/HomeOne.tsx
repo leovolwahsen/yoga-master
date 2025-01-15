@@ -1,21 +1,18 @@
 import { useEffect, useState } from "react";
 import { useAxios } from "../../../data/useAxios";
+import { IImage } from "../../../types/interfaces";
 
 export const HomeOne = () => {
-  const axiosData = useAxios();
-  const [images, setImages] = useState<any[]>([]);
+  const axiosInstance = useAxios();
+  const [images, setImages] = useState<IImage[]>([]);
 
   useEffect(() => {
-    const fetchImages = async () => {
-      try {
-        const response = await axiosData.get("/images");
-        setImages(response.data);
-      } catch (error) {
-        console.error("Error fetching images:", error);
-      }
-    };
-    fetchImages();
-  }, []);
+    axiosInstance.get("/images").then((res) => {
+      setImages(res.data);
+    }).catch((err) => {
+      console.error(`Error fetching images data: ${err}`);
+    });
+  }, [axiosInstance]);
 
   if (!images.length) {
     return <div className="min-h-screen flex justify-center items-center">Loading...</div>;

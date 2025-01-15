@@ -5,15 +5,15 @@ import { IPopularInstructor } from "../../../types/interfaces";
 
 export const PopularInstructors = () => {
     const [instructor, setInstructor] = useState<IPopularInstructor[]>([]);
-    const axiosData = useAxios();
+    const axiosInstance = useAxios();
 
     useEffect(() => {
-        axiosData.get("/popular-instructors").then((res) => {
+        axiosInstance.get("/popular-instructors").then((res) => {
             setInstructor(res.data);
         }).catch((err) => {
-            console.log(err)
-        })
-    }, [axiosData]);
+            console.log(`Error fetching instructors data: ${err}`)
+        });
+    }, [axiosInstance]);
 
 
     return (

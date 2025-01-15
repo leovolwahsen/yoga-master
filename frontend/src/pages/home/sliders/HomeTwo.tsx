@@ -1,20 +1,18 @@
 import { useEffect, useState } from "react";
 import { useAxios } from "../../../data/useAxios";
+import { IImage } from "../../../types/interfaces";
 
 export const HomeTwo = () => {
-  const axiosData = useAxios();
-  const [images, setImages] = useState<any[]>([]); 
+  const axiosInstance = useAxios();
+  const [images, setImages] = useState<IImage[]>([]); 
+
   useEffect(() => {
-    const axiosImages = async () => {
-      try {
-        const response = await axiosData.get("/images");
-        setImages(response.data);
-      } catch (error) {
-        console.error("Error fetching images:", error);
-      }
-    };
-    axiosImages();
-  }, []);
+    axiosInstance.get("/images").then((res) => {
+      setImages(res.data);
+    }).catch((err) => {
+      console.error(`Error fetching images data: ${err}`);
+    });
+  }, [axiosInstance]);
 
   if (!images.length) {
     return <div className="min-h-screen flex justify-center items-center">Loading...</div>;
@@ -24,7 +22,7 @@ export const HomeTwo = () => {
     <div
       className="min-h-screen bg-cover bg-black"
       style={{
-        backgroundImage: `url("${images[0]?.homepage?.image1}")`,
+        backgroundImage: `url("${images[0]?.homepage?.image3}")`,
       }}
     >
       <div className="min-h-screen flex justify-start pl-11 items-center text-white bg-black bg-opacity-60">

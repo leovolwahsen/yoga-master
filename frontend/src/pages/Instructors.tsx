@@ -6,15 +6,15 @@ import { useAxios } from "../data/useAxios";
 export const Instructors = () => {
     const { isDarkMode } = useOutletContext<IOutletContext>();
     const [instructor, setInstructor] = useState<IInstructors[]>([]);
-    const axiosData = useAxios();
+    const axiosInstance = useAxios();
 
     useEffect(() => {
-        axiosData.get("/instructors").then((res) => {
+        axiosInstance.get("/instructors").then((res) => {
             setInstructor(res.data);
         }).catch((err) => {
-            console.error(err);
-        })
-    }, [axiosData]);
+            console.error(`Error fetching instructors data: ${err}`);
+        });
+    }, [axiosInstance]);
 
     return (
         <div className={`${isDarkMode ? "bg-black text-white" : "bg-gray-100 text-black"} p-8`}>
