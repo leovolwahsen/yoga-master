@@ -20,7 +20,7 @@ export const Footer = ({ isDarkMode }: FooterProps) => {
   const handleAttendeeSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     try {
-      const response = await axiosInstance.post("/new-subscription", { email });
+      const response = await axiosInstance.post("/new-subscribed", { email });
       if (response.status === 201) {
         toast.success("You have successfully subscribed to our newsletter!", { autoClose: false });
         setEmail("");
