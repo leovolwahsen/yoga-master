@@ -14,7 +14,7 @@ export const Instructors = () => {
         }).catch((err) => {
             console.error(err);
         })
-    }, []);
+    }, [axiosData]);
 
     return (
         <div className={`${isDarkMode ? "bg-black text-white" : "bg-gray-100 text-black"} p-8`}>

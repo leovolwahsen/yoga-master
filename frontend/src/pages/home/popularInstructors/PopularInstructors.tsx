@@ -13,7 +13,7 @@ export const PopularInstructors = () => {
         }).catch((err) => {
             console.log(err)
         })
-    }, []);
+    }, [axiosData]);
 
 
     return (

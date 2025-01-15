@@ -141,7 +141,7 @@ const AuthenticationProvider: React.FC<IAuthenticationProviderProps> = ({ childr
             }
         })
         return () => unsubscribe()
-    }, [])
+    }, [auth])
 
     const contextValue: IAuthContextValue = { user, signup, login, logout, updateUser, googleLogin, error, setError };
 

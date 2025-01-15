@@ -20,6 +20,7 @@ export let paymentCollection: Collection;
 export let enrolledCollection: Collection;
 export let appliedCollection: Collection;
 export let imagesCollection: Collection;
+export let subscribedCollection: Collection;
 
 export async function connectToDatabase(): Promise<void> {
   try {
@@ -33,6 +34,7 @@ export async function connectToDatabase(): Promise<void> {
     enrolledCollection = db.collection("enrolled");
     appliedCollection = db.collection("applied");
     imagesCollection = db.collection("images");
+    subscribedCollection = db.collection("subscribed");
 
     console.log("Connected to MongoDB and initialized collections.");
   } catch (error) {

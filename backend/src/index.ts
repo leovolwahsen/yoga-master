@@ -10,6 +10,7 @@ import { paymentRouter } from "./api/payment/routers";
 import { appliedRouter } from "./api/applied/routes";
 import { authenticatorRouter } from "./api/authentication/routers";
 import { imagesRouter } from "./api/images/routers";
+import { subscribedRouter } from "./api/subscribed/routers";
 
 dotenv.config();
 
@@ -33,6 +34,7 @@ connectToDatabase().then(() => {
   app.use("/", paymentRouter);
   app.use("/", appliedRouter);
   app.use("/", imagesRouter);
+  app.use("/", subscribedRouter)
 
   app.get("/", (req: Request, res: Response) => {
     res.send("Welcome to the backend server!");
